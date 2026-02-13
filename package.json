@@ -1,0 +1,33 @@
+{
+  "name": "wellness-reminder",
+  "version": "1.0.0",
+  "description": "A calming wellness reminder app for healthy work habits",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac"
+  },
+  "author": "You",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  },
+  "build": {
+    "appId": "com.wellness.reminder",
+    "productName": "Wellness Reminder",
+    "mac": {
+      "category": "public.app-category.healthcare-fitness",
+      "identity": null
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "sounds/**/*"
+    ]
+  }
+}
