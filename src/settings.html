@@ -5,268 +5,230 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wellness Reminder</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --bg-card: rgba(255, 255, 255, 0.05);
-      --accent-soft: #e2e8f0;
-      --accent-muted: #94a3b8;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --success: #4ade80;
-      --warning: #fbbf24;
-      --error: #f87171;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-      background: linear-gradient(160deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0f;
       min-height: 100vh;
-      color: var(--text-primary);
+      color: rgba(230, 225, 240, 0.85);
       -webkit-app-region: drag;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      padding: 50px 30px 30px;
+      padding: 48px 28px 28px;
       -webkit-app-region: no-drag;
     }
 
+    /* Header */
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
 
     .header h1 {
-      font-size: 24px;
-      font-weight: 400;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-
-    .header p {
-      color: var(--accent-muted);
-      font-size: 13px;
+      font-size: 18px;
       font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: lowercase;
+      color: rgba(180, 175, 200, 0.5);
+      margin-bottom: 0;
     }
 
+    /* Tabs */
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 25px;
+      gap: 0;
+      margin-bottom: 28px;
       justify-content: center;
+      border-bottom: 1px solid rgba(180, 175, 200, 0.06);
+      padding-bottom: 0;
     }
 
     .tab {
-      padding: 8px 20px;
+      padding: 10px 20px;
       background: transparent;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: 6px;
-      color: var(--accent-muted);
+      border: none;
+      border-bottom: 1px solid transparent;
+      margin-bottom: -1px;
+      color: rgba(180, 175, 200, 0.25);
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 13px;
+      font-size: 11px;
       font-family: inherit;
+      letter-spacing: 2px;
+      text-transform: lowercase;
     }
 
-    .tab:hover {
-      border-color: rgba(148, 163, 184, 0.4);
-      color: var(--text-secondary);
-    }
+    .tab:hover { color: rgba(180, 175, 200, 0.45); }
 
     .tab.active {
-      background: var(--accent-soft);
-      color: var(--bg-primary);
-      border-color: var(--accent-soft);
+      color: rgba(180, 175, 200, 0.6);
+      border-bottom-color: rgba(180, 175, 200, 0.3);
     }
 
-    .tab-content {
-      display: none;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .tab-content.active {
-      display: block;
-    }
-
+    /* Cards */
     .card {
-      background: var(--bg-card);
-      border-radius: 12px;
+      background: rgba(180, 175, 200, 0.02);
+      border-radius: 14px;
       padding: 22px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.1);
+      margin-bottom: 14px;
+      border: 1px solid rgba(180, 175, 200, 0.04);
     }
 
     .card h3 {
-      font-size: 14px;
+      font-size: 9px;
       font-weight: 500;
-      margin-bottom: 16px;
-      color: var(--text-secondary);
+      margin-bottom: 18px;
+      color: rgba(180, 175, 200, 0.25);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 3px;
     }
 
+    /* Stats */
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
       text-align: center;
     }
 
     .stat {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 18px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.08);
+      padding: 18px 10px;
+      border-radius: 12px;
+      background: rgba(180, 175, 200, 0.02);
+      border: 1px solid rgba(180, 175, 200, 0.03);
     }
 
     .stat-value {
-      font-size: 32px;
-      font-weight: 300;
+      font-size: 30px;
+      font-weight: 200;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .stat-label {
-      font-size: 11px;
-      color: var(--accent-muted);
+      font-size: 9px;
+      color: rgba(180, 175, 200, 0.25);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
 
-    .stat.completed .stat-value { color: var(--success); }
-    .stat.skipped .stat-value { color: var(--error); }
-    .stat.streak .stat-value { color: var(--warning); }
+    .stat.completed .stat-value { color: rgba(140, 200, 170, 0.7); }
+    .stat.skipped .stat-value { color: rgba(200, 150, 150, 0.5); }
+    .stat.streak .stat-value { color: rgba(200, 185, 140, 0.6); }
 
     .progress-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
+      height: 2px;
+      background: rgba(180, 175, 200, 0.04);
+      border-radius: 1px;
       overflow: hidden;
-      margin-top: 16px;
+      margin-top: 18px;
     }
 
     .progress-fill {
       height: 100%;
-      background: var(--success);
-      border-radius: 2px;
-      transition: width 0.5s ease;
+      background: rgba(140, 200, 170, 0.4);
+      border-radius: 1px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* Toggles */
     .toggle-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 14px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
     }
 
-    .toggle-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .toggle-row:first-of-type {
-      padding-top: 0;
-    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-of-type { padding-top: 0; }
 
     .toggle-info h4 {
-      font-size: 14px;
-      font-weight: 400;
+      font-size: 13px;
+      font-weight: 300;
       margin-bottom: 3px;
-      color: var(--text-primary);
+      color: rgba(230, 225, 240, 0.6);
     }
 
     .toggle-info p {
-      font-size: 12px;
-      color: var(--accent-muted);
+      font-size: 11px;
+      color: rgba(180, 175, 200, 0.2);
     }
 
     .toggle {
-      width: 44px;
-      height: 24px;
-      background: rgba(148, 163, 184, 0.2);
-      border-radius: 12px;
+      width: 38px;
+      height: 20px;
+      background: rgba(180, 175, 200, 0.08);
+      border-radius: 10px;
       position: relative;
       cursor: pointer;
       transition: background 0.3s ease;
       flex-shrink: 0;
     }
 
-    .toggle.active {
-      background: var(--success);
-    }
+    .toggle.active { background: rgba(140, 200, 170, 0.3); }
 
     .toggle::after {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
-      background: white;
+      width: 14px; height: 14px;
+      background: rgba(230, 225, 240, 0.6);
       border-radius: 50%;
-      top: 3px;
-      left: 3px;
-      transition: transform 0.3s ease;
+      top: 3px; left: 3px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .toggle.active::after {
-      transform: translateX(20px);
+      transform: translateX(18px);
+      background: rgba(230, 225, 240, 0.8);
     }
 
+    /* Schedule */
     .schedule-item {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
     }
 
-    .schedule-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
+    .schedule-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .schedule-item:first-child { padding-top: 0; }
+
+    .schedule-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(180, 175, 200, 0.15);
+      flex-shrink: 0;
     }
 
-    .schedule-item:first-child {
-      padding-top: 0;
-    }
-
-    .schedule-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(148, 163, 184, 0.1);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent-muted);
-      font-size: 14px;
-    }
-
-    .schedule-info {
-      flex: 1;
-    }
+    .schedule-info { flex: 1; }
 
     .schedule-info h4 {
-      font-size: 14px;
-      font-weight: 400;
+      font-size: 13px;
+      font-weight: 300;
       margin-bottom: 2px;
+      color: rgba(230, 225, 240, 0.6);
     }
 
     .schedule-info p {
-      font-size: 12px;
-      color: var(--accent-muted);
+      font-size: 11px;
+      color: rgba(180, 175, 200, 0.2);
     }
 
     .schedule-time {
-      font-size: 12px;
-      color: var(--accent-muted);
-      text-align: right;
+      font-size: 11px;
+      color: rgba(180, 175, 200, 0.2);
+      letter-spacing: 0.5px;
     }
 
+    /* Recent breaks */
     .recent-breaks {
       max-height: 180px;
       overflow-y: auto;
@@ -276,146 +238,139 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-      font-size: 13px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
+      font-size: 12px;
     }
 
-    .break-item:last-child {
-      border-bottom: none;
-    }
+    .break-item:last-child { border-bottom: none; }
 
-    .break-time {
-      color: var(--accent-muted);
-    }
+    .break-time { color: rgba(180, 175, 200, 0.2); font-size: 11px; }
 
     .break-status {
-      padding: 3px 10px;
-      border-radius: 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      text-transform: lowercase;
+      letter-spacing: 1px;
     }
 
     .break-status.completed {
-      background: rgba(74, 222, 128, 0.15);
-      color: var(--success);
+      background: rgba(140, 200, 170, 0.08);
+      color: rgba(140, 200, 170, 0.5);
     }
 
     .break-status.skipped {
-      background: rgba(248, 113, 113, 0.15);
-      color: var(--error);
+      background: rgba(200, 150, 150, 0.08);
+      color: rgba(200, 150, 150, 0.4);
     }
 
-    .motivation {
-      text-align: center;
-      padding: 16px;
-      font-size: 14px;
-      font-style: italic;
-      color: var(--text-secondary);
-      font-weight: 300;
-    }
-
+    /* Shortcuts */
     .shortcut-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-      font-size: 13px;
+      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
+      font-size: 12px;
+      color: rgba(230, 225, 240, 0.4);
     }
 
-    .shortcut-row:last-child {
-      border-bottom: none;
-    }
+    .shortcut-row:last-child { border-bottom: none; }
 
     kbd {
-      background: rgba(148, 163, 184, 0.1);
-      padding: 4px 10px;
+      background: rgba(180, 175, 200, 0.04);
+      padding: 3px 8px;
       border-radius: 4px;
       font-family: inherit;
-      font-size: 12px;
-      color: var(--accent-muted);
+      font-size: 10px;
+      color: rgba(180, 175, 200, 0.3);
+      border: 1px solid rgba(180, 175, 200, 0.04);
     }
 
-    .close-hint {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      color: var(--accent-muted);
-    }
-
+    /* Stretch list */
     .stretch-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      font-size: 13px;
     }
 
     .stretch-list h4 {
-      font-size: 12px;
+      font-size: 9px;
       font-weight: 500;
-      margin-bottom: 8px;
-      color: var(--text-secondary);
+      margin-bottom: 10px;
+      color: rgba(180, 175, 200, 0.2);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 2px;
     }
 
     .stretch-list ul {
       list-style: none;
-      color: var(--accent-muted);
-      line-height: 1.8;
+      color: rgba(180, 175, 200, 0.25);
+      font-size: 12px;
+      line-height: 2;
+      font-weight: 300;
     }
 
     .empty-state {
       text-align: center;
-      padding: 30px 20px;
-      color: var(--accent-muted);
+      padding: 24px 16px;
+      color: rgba(180, 175, 200, 0.15);
+      font-size: 12px;
+      font-weight: 300;
+    }
+
+    .close-hint {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 10px;
+      color: rgba(180, 175, 200, 0.12);
+      letter-spacing: 0.5px;
+    }
+
+    .motivation {
+      text-align: center;
+      padding: 14px;
       font-size: 13px;
+      color: rgba(180, 175, 200, 0.2);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.6;
     }
 
-    ::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.2);
-      border-radius: 2px;
-    }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(180, 175, 200, 0.08); border-radius: 2px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>Wellness Reminder</h1>
-      <p>Take care of yourself while you work</p>
+      <h1>wellness</h1>
     </div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="summary">Summary</button>
-      <button class="tab" data-tab="schedule">Schedule</button>
-      <button class="tab" data-tab="settings">Settings</button>
+      <button class="tab active" data-tab="summary">today</button>
+      <button class="tab" data-tab="schedule">schedule</button>
+      <button class="tab" data-tab="settings">settings</button>
     </div>
 
-    <!-- Summary Tab -->
+    <!-- Summary -->
     <div class="tab-content active" id="summary">
       <div class="card">
-        <h3>Today</h3>
         <div class="stat-grid">
           <div class="stat completed">
             <span class="stat-value" id="completedCount">0</span>
-            <span class="stat-label">Completed</span>
+            <span class="stat-label">done</span>
           </div>
           <div class="stat skipped">
             <span class="stat-value" id="skippedCount">0</span>
-            <span class="stat-label">Skipped</span>
+            <span class="stat-label">skipped</span>
           </div>
           <div class="stat streak">
             <span class="stat-value" id="streakCount">0</span>
-            <span class="stat-label">Streak</span>
+            <span class="stat-label">streak</span>
           </div>
         </div>
         <div class="progress-bar">
@@ -426,58 +381,61 @@
       <div class="card">
         <h3>Recent</h3>
         <div class="recent-breaks" id="recentBreaks">
-          <p class="empty-state">No breaks yet today</p>
+          <p class="empty-state">no breaks yet today</p>
         </div>
       </div>
 
-      <div class="card motivation" id="motivation">
-        "Small breaks lead to big productivity gains."
-      </div>
+      <div class="card motivation" id="motivation"></div>
     </div>
 
-    <!-- Schedule Tab -->
+    <!-- Schedule -->
     <div class="tab-content" id="schedule">
       <div class="card">
-        <h3>Break Schedule</h3>
+        <h3>Breaks</h3>
         <div class="schedule-item">
-          <div class="schedule-icon">E</div>
+          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Eye Break + Micro-Stretch</h4>
-            <p>Look away, rest eyes, quick stretch</p>
+            <h4>Eyes + stretch</h4>
+            <p>Look away, quick body stretch</p>
           </div>
           <span class="schedule-time">20 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-icon">P</div>
+          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Posture + Breathing</h4>
+            <h4>Posture + breathing</h4>
             <p>Switch sit/stand, mindful breathing</p>
           </div>
           <span class="schedule-time">40 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-icon">S</div>
+          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Full Stretch</h4>
+            <h4>Full stretch</h4>
             <p>Deeper stretches for back, hips, legs</p>
           </div>
           <span class="schedule-time">100 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-icon">W</div>
+          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Walk Break</h4>
-            <p>Get up and move around</p>
+            <h4>Walk + settle</h4>
+            <p>Walk around, then extended breathing</p>
           </div>
           <span class="schedule-time">2 hrs</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-dot"></div>
+          <div class="schedule-info">
+            <h4>Mindfulness</h4>
+            <p>Longer guided breathing session</p>
+          </div>
+          <span class="schedule-time">4 hrs</span>
         </div>
       </div>
 
       <div class="card">
-        <h3>Stretch Rotation</h3>
-        <p style="color: var(--accent-muted); font-size: 12px; margin-bottom: 14px;">
-          Stretches cycle through to cover your whole body:
-        </p>
+        <h3>Rotation</h3>
         <div class="stretch-list">
           <div>
             <h4>Quick</h4>
@@ -505,61 +463,56 @@
       </div>
     </div>
 
-    <!-- Settings Tab -->
+    <!-- Settings -->
     <div class="tab-content" id="settings">
       <div class="card">
-        <h3>Preferences</h3>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Pomodoro Mode</h4>
-            <p>Track 25-minute focus sessions</p>
+            <h4>Pomodoro mode</h4>
+            <p>25-minute focus sessions</p>
           </div>
           <div class="toggle" id="pomodoroToggle"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Launch on Startup</h4>
-            <p>Start automatically when you log in</p>
+            <h4>Launch on startup</h4>
+            <p>Start when you log in</p>
           </div>
           <div class="toggle active" id="startupToggle"></div>
         </div>
       </div>
 
       <div class="card">
-        <h3>Keyboard Shortcuts</h3>
+        <h3>Shortcuts</h3>
         <div class="shortcut-row">
-          <span>Toggle Pause</span>
-          <kbd>Cmd + Shift + P</kbd>
+          <span>Pause / resume</span>
+          <kbd>Cmd+Shift+P</kbd>
         </div>
         <div class="shortcut-row">
-          <span>Complete Break</span>
-          <kbd>Space</kbd>
+          <span>Begin / advance</span>
+          <kbd>Enter</kbd>
         </div>
         <div class="shortcut-row">
-          <span>Skip Break</span>
+          <span>Skip break</span>
           <kbd>Esc</kbd>
         </div>
       </div>
 
       <div class="card">
-        <h3>About</h3>
-        <p style="font-size: 13px; color: var(--accent-muted); line-height: 1.6;">
-          Based on research-backed intervals for eye health, posture, and movement.
-          Automatically pauses during calls and fullscreen apps.
-        </p>
-        <p style="font-size: 12px; color: var(--accent-muted); margin-top: 12px; opacity: 0.6;">
-          Version 1.0.0
+        <p style="font-size: 11px; color: rgba(180,175,200,0.15); line-height: 1.8; font-weight: 300;">
+          Auto-pauses during calls and fullscreen apps.
+          Detects Zoom, Google Meet, Slack, FaceTime.
         </p>
       </div>
     </div>
 
-    <p class="close-hint">Close to hide · App runs in menu bar</p>
+    <p class="close-hint">close to hide &middot; lives in your menu bar</p>
   </div>
 
   <script>
     const { ipcRenderer } = require('electron');
 
-    // Tab switching
+    // Tabs
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -569,7 +522,7 @@
       });
     });
 
-    // Toggle handlers
+    // Toggles
     const pomodoroToggle = document.getElementById('pomodoroToggle');
     const startupToggle = document.getElementById('startupToggle');
 
@@ -583,75 +536,67 @@
       ipcRenderer.send('set-launch-on-startup', startupToggle.classList.contains('active'));
     });
 
-    // Load stats
-    function loadStats() {
-      ipcRenderer.send('get-stats');
-    }
+    // Stats
+    function loadStats() { ipcRenderer.send('get-stats'); }
 
-    ipcRenderer.on('stats-data', (event, stats) => {
+    ipcRenderer.on('stats-data', (_, stats) => {
       document.getElementById('completedCount').textContent = stats.completed || 0;
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
 
-      const total = (stats.completed || 0) + (stats.skipped || 0);
-      const percentage = total > 0 ? ((stats.completed || 0) / total * 100) : 0;
-      document.getElementById('progressFill').style.width = percentage + '%';
+      // Streak
+      let streak = 0;
+      if (stats.breaks) {
+        for (let i = stats.breaks.length - 1; i >= 0; i--) {
+          if (stats.breaks[i].status === 'completed') streak++;
+          else break;
+        }
+      }
+      document.getElementById('streakCount').textContent = streak;
 
-      // Update recent breaks
+      const total = (stats.completed || 0) + (stats.skipped || 0);
+      const pct = total > 0 ? ((stats.completed || 0) / total * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+
       const recentBreaks = document.getElementById('recentBreaks');
       if (stats.breaks && stats.breaks.length > 0) {
         recentBreaks.innerHTML = stats.breaks.slice(-8).reverse().map(b => {
           const time = new Date(b.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const activities = b.activities.join(', ');
-          return `
-            <div class="break-item">
-              <span class="break-time">${time}</span>
-              <span style="flex: 1; text-align: center; color: var(--accent-muted);">${activities}</span>
-              <span class="break-status ${b.status}">${b.status}</span>
-            </div>
-          `;
+          return `<div class="break-item">
+            <span class="break-time">${time}</span>
+            <span class="break-status ${b.status}">${b.status}</span>
+          </div>`;
         }).join('');
       } else {
-        recentBreaks.innerHTML = '<p class="empty-state">No breaks yet today</p>';
+        recentBreaks.innerHTML = '<p class="empty-state">no breaks yet today</p>';
       }
     });
 
-    ipcRenderer.on('show-summary', (event, stats) => {
+    ipcRenderer.on('show-summary', (_, stats) => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelector('[data-tab="summary"]').classList.add('active');
       document.getElementById('summary').classList.add('active');
-
       document.getElementById('completedCount').textContent = stats.completed || 0;
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
     });
 
-    // Load settings
+    // Settings
     ipcRenderer.send('get-settings');
-    ipcRenderer.on('settings-data', (event, data) => {
-      if (data.pomodoroEnabled) {
-        pomodoroToggle.classList.add('active');
-      } else {
-        pomodoroToggle.classList.remove('active');
-      }
-      if (data.launchOnStartup) {
-        startupToggle.classList.add('active');
-      } else {
-        startupToggle.classList.remove('active');
-      }
+    ipcRenderer.on('settings-data', (_, data) => {
+      pomodoroToggle.classList.toggle('active', data.pomodoroEnabled);
+      startupToggle.classList.toggle('active', data.launchOnStartup);
     });
 
-    // Motivational quotes
+    // Quote
     const quotes = [
-      "Small breaks lead to big productivity gains.",
-      "Your body is your most important tool.",
-      "A moment of rest is an investment in your work.",
-      "Healthy habits today, healthy you tomorrow.",
-      "Movement is medicine for the mind.",
-      "Rest is not idleness; it's essential.",
-      "Take care of your body. It's the only place you have to live.",
-      "The time to relax is when you don't have time for it."
+      "Small pauses, steady gains.",
+      "Your body carries your ambition. Take care of it.",
+      "Rest is not the opposite of work. It's part of it.",
+      "A few breaths can change the rest of your day.",
+      "Movement is how the body thinks.",
+      "The gentlest reminder is sometimes the most important.",
     ];
-    document.getElementById('motivation').textContent = '"' + quotes[Math.floor(Math.random() * quotes.length)] + '"';
+    document.getElementById('motivation').textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
     loadStats();
     setInterval(loadStats, 60000);

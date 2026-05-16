@@ -5,504 +5,460 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wellness Break</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --accent-soft: #e2e8f0;
-      --accent-muted: #94a3b8;
-      --accent-warm: #fef3e2;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --glow: rgba(226, 232, 240, 0.1);
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow: hidden;
-      background: var(--bg-primary);
+      background: #0a0a0f;
+      -webkit-font-smoothing: antialiased;
+      cursor: default;
     }
 
     .overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(160deg,
-        var(--bg-primary) 0%,
-        var(--bg-secondary) 50%,
-        #1a1a2e 100%);
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity 2.5s ease-in-out;
+      transition: opacity 2s ease;
     }
 
-    .overlay.visible {
-      opacity: 1;
-    }
+    .overlay.visible { opacity: 1; }
 
-    /* Gentle ambient glow */
-    .ambient-glow {
+    /* Living gradient background that slowly breathes */
+    .bg-layer {
       position: fixed;
-      width: 600px;
-      height: 600px;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+    }
+
+    .bg-gradient {
+      position: absolute;
+      width: 100%; height: 100%;
+      background: linear-gradient(170deg, #0a0a12 0%, #0e1018 40%, #0d0f16 100%);
+    }
+
+    .bg-orb {
+      position: absolute;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(148, 163, 184, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      animation: drift 20s ease-in-out infinite;
+      filter: blur(100px);
+      opacity: 0;
+      transition: opacity 3s ease;
     }
 
-    .ambient-glow:nth-child(1) {
-      top: -200px;
-      left: -100px;
+    .overlay.visible .bg-orb { opacity: 1; }
+
+    .bg-orb-1 {
+      width: 50vw; height: 50vw;
+      top: -10%; left: -10%;
+      background: radial-gradient(circle, rgba(90, 80, 140, 0.12), transparent 70%);
+      animation: orbDrift1 30s ease-in-out infinite;
     }
 
-    .ambient-glow:nth-child(2) {
-      bottom: -200px;
-      right: -100px;
-      animation-delay: -10s;
+    .bg-orb-2 {
+      width: 40vw; height: 40vw;
+      bottom: -5%; right: -5%;
+      background: radial-gradient(circle, rgba(70, 120, 120, 0.08), transparent 70%);
+      animation: orbDrift2 25s ease-in-out infinite;
     }
 
-    @keyframes drift {
+    .bg-orb-3 {
+      width: 30vw; height: 30vw;
+      top: 40%; left: 50%;
+      background: radial-gradient(circle, rgba(100, 90, 130, 0.06), transparent 70%);
+      animation: orbDrift3 35s ease-in-out infinite;
+    }
+
+    @keyframes orbDrift1 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(5vw, 3vh); }
+      66% { transform: translate(-3vw, 5vh); }
+    }
+
+    @keyframes orbDrift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-4vw, -3vh); }
+    }
+
+    @keyframes orbDrift3 {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(30px, 20px) scale(1.05); }
+      50% { transform: translate(3vw, -2vh) scale(1.1); }
     }
 
     .content {
       text-align: center;
-      color: var(--text-primary);
-      max-width: 700px;
-      padding: 40px;
       position: relative;
       z-index: 10;
+      max-width: 520px;
+      padding: 40px;
     }
 
-    /* Activity queue - minimal dots */
+    /* Progress dots - very subtle */
     .activity-queue {
       display: flex;
-      gap: 8px;
+      gap: 16px;
       justify-content: center;
-      margin-bottom: 50px;
+      margin-bottom: 60px;
+      opacity: 0.6;
     }
 
     .queue-dot {
-      width: 6px;
-      height: 6px;
+      width: 4px; height: 4px;
       border-radius: 50%;
-      background: var(--accent-muted);
-      opacity: 0.3;
-      transition: all 0.5s ease;
+      background: rgba(180, 175, 200, 0.2);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .queue-dot.active {
-      opacity: 1;
-      background: var(--accent-soft);
-      transform: scale(1.5);
+      background: rgba(180, 175, 200, 0.7);
+      box-shadow: 0 0 16px rgba(180, 175, 200, 0.3);
+      transform: scale(2);
     }
 
     .queue-dot.completed {
-      opacity: 0.6;
-      background: var(--accent-soft);
+      background: rgba(180, 175, 200, 0.4);
     }
 
-    /* Activity type label */
+    /* Type label */
     .activity-type {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      color: var(--accent-muted);
-      margin-bottom: 16px;
+      letter-spacing: 5px;
+      color: rgba(180, 175, 200, 0.35);
+      margin-bottom: 20px;
       font-weight: 500;
     }
 
+    /* Name - large, ethereal */
     .activity-name {
-      font-size: 38px;
-      font-weight: 300;
-      margin-bottom: 20px;
-      letter-spacing: -0.5px;
-      color: var(--text-primary);
+      font-size: 46px;
+      font-weight: 200;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+      color: rgba(230, 225, 240, 0.85);
+      line-height: 1.1;
     }
 
+    /* Instructions - gentle guidance */
     .activity-instructions {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 300;
-      line-height: 1.7;
-      margin-bottom: 50px;
-      color: var(--text-secondary);
-      max-width: 500px;
+      line-height: 2;
+      margin-bottom: 52px;
+      color: rgba(180, 175, 200, 0.5);
+      max-width: 400px;
       margin-left: auto;
       margin-right: auto;
     }
 
-    /* Visual area for stretches */
-    .visual-container {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 40px;
+    /* === Breathing orb === */
+    .breathing-orb-container {
+      width: 200px; height: 200px;
+      margin: 0 auto 44px;
+      display: none;
       position: relative;
-      display: none;
     }
 
-    .visual-container.visible {
-      display: block;
-    }
+    .breathing-orb-container.visible { display: block; }
 
-    .stretch-figure {
-      width: 100%;
-      height: 100%;
-    }
-
-    .stretch-figure line,
-    .stretch-figure path {
-      stroke: var(--accent-muted);
-      stroke-width: 2;
-      stroke-linecap: round;
-      fill: none;
-    }
-
-    .stretch-figure circle {
-      fill: var(--accent-muted);
-    }
-
-    /* Breathing circle */
-    .breathing-circle {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 40px;
+    .breathing-orb {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px; height: 100px;
       border-radius: 50%;
-      border: 1px solid var(--accent-muted);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.6;
+      background: radial-gradient(circle at 40% 40%,
+        rgba(150, 140, 190, 0.25),
+        rgba(100, 90, 150, 0.1) 60%,
+        transparent 80%);
+      transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .breathing-circle.visible {
-      display: flex;
+    .breathing-orb.inhale {
+      width: 160px; height: 160px;
+      background: radial-gradient(circle at 40% 40%,
+        rgba(150, 140, 190, 0.35),
+        rgba(100, 90, 150, 0.15) 60%,
+        transparent 80%);
     }
 
-    .breathing-circle.breathing-in {
-      animation: breatheIn 4s ease-in-out forwards;
+    .breathing-orb.hold {
+      width: 160px; height: 160px;
+      background: radial-gradient(circle at 40% 40%,
+        rgba(150, 140, 190, 0.35),
+        rgba(100, 90, 150, 0.15) 60%,
+        transparent 80%);
     }
 
-    .breathing-circle.breathing-out {
-      animation: breatheOut 4s ease-in-out forwards;
+    .breathing-orb-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(150, 140, 190, 0.08);
+      transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .breathing-circle.breathing-hold {
-      transform: scale(1.3);
-      opacity: 0.8;
+    .breathing-orb-ring.inhale,
+    .breathing-orb-ring.hold {
+      width: 180px; height: 180px;
+      border-color: rgba(150, 140, 190, 0.15);
     }
 
-    @keyframes breatheIn {
-      from { transform: scale(1); opacity: 0.4; }
-      to { transform: scale(1.3); opacity: 0.8; }
-    }
-
-    @keyframes breatheOut {
-      from { transform: scale(1.3); opacity: 0.8; }
-      to { transform: scale(1); opacity: 0.4; }
-    }
-
-    .breathing-text {
-      font-size: 14px;
-      letter-spacing: 2px;
+    .breathing-label {
+      position: absolute;
+      bottom: -8px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      color: var(--accent-muted);
+      color: rgba(180, 175, 200, 0.35);
+      font-weight: 300;
+      transition: color 1s ease;
     }
 
-    /* Posture indicator */
+    /* Stretch figures */
+    .visual-container {
+      width: 130px; height: 130px;
+      margin: 0 auto 44px;
+      display: none;
+      opacity: 0.4;
+    }
+
+    .visual-container.visible { display: block; }
+
+    .stretch-figure { width: 100%; height: 100%; }
+    .stretch-figure line, .stretch-figure path { stroke: rgba(180, 175, 200, 0.6); stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .stretch-figure circle { fill: rgba(180, 175, 200, 0.6); }
+
+    /* Posture */
     .posture-visual {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 40px;
+      width: 100px; height: 100px;
+      margin: 0 auto 44px;
       display: none;
+      opacity: 0.4;
     }
 
-    .posture-visual.visible {
-      display: block;
-    }
+    .posture-visual.visible { display: block; }
 
-    /* Timer */
+    /* Timer - just a thin arc and number */
     .timer-container {
-      margin-bottom: 50px;
+      margin-bottom: 52px;
       display: none;
     }
 
-    .timer-container.visible {
-      display: block;
-    }
+    .timer-container.visible { display: block; }
 
     .timer-ring {
-      width: 140px;
-      height: 140px;
+      width: 120px; height: 120px;
       margin: 0 auto;
       position: relative;
     }
 
-    .timer-ring svg {
-      transform: rotate(-90deg);
-    }
+    .timer-ring svg { transform: rotate(-90deg); }
 
-    .timer-ring circle {
-      fill: none;
-      stroke-width: 2;
-    }
-
-    .timer-ring .bg {
-      stroke: rgba(148, 163, 184, 0.15);
-    }
+    .timer-ring circle { fill: none; }
+    .timer-ring .bg { stroke: rgba(180, 175, 200, 0.06); stroke-width: 1; }
 
     .timer-ring .progress {
-      stroke: var(--accent-soft);
+      stroke: rgba(180, 175, 200, 0.3);
+      stroke-width: 1;
       stroke-linecap: round;
       transition: stroke-dashoffset 1s linear;
-      opacity: 0.8;
     }
 
     .timer-text {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 200;
-      color: var(--text-primary);
+      color: rgba(230, 225, 240, 0.6);
       font-variant-numeric: tabular-nums;
     }
 
-    /* Buttons */
-    .buttons {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+    /* Buttons - nearly invisible until hovered */
+    .btn {
+      padding: 12px 28px;
+      font-size: 12px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      font-weight: 400;
+      letter-spacing: 1px;
+      font-family: inherit;
+      outline: none;
+      text-transform: lowercase;
     }
 
-    .btn {
-      padding: 14px 36px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 400;
-      letter-spacing: 0.5px;
-      font-family: inherit;
-    }
+    .btn:focus-visible { box-shadow: 0 0 0 1px rgba(180, 175, 200, 0.3); }
 
     .btn-primary {
-      background: var(--accent-soft);
-      color: var(--bg-primary);
+      background: rgba(180, 175, 200, 0.08);
+      color: rgba(230, 225, 240, 0.6);
+      border: 1px solid rgba(180, 175, 200, 0.1);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(226, 232, 240, 0.15);
+    .btn-primary:hover, .btn-primary:focus {
+      background: rgba(180, 175, 200, 0.14);
+      color: rgba(230, 225, 240, 0.8);
     }
 
     .btn-secondary {
       background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: rgba(180, 175, 200, 0.3);
+      border: 1px solid rgba(180, 175, 200, 0.06);
     }
 
     .btn-secondary:hover {
-      border-color: rgba(148, 163, 184, 0.5);
-      color: var(--text-primary);
+      color: rgba(180, 175, 200, 0.5);
+      border-color: rgba(180, 175, 200, 0.12);
     }
 
-    .btn-text {
+    .btn-skip {
       background: transparent;
-      color: var(--accent-muted);
+      color: rgba(180, 175, 200, 0.15);
       border: none;
-      font-size: 13px;
-      padding: 10px 20px;
+      font-size: 11px;
+      padding: 8px 16px;
+      margin-top: 8px;
     }
 
-    .btn-text:hover {
-      color: var(--text-secondary);
+    .btn-skip:hover { color: rgba(180, 175, 200, 0.35); }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 8px;
     }
 
     .snooze-info {
-      margin-top: 12px;
-      font-size: 12px;
-      color: var(--accent-muted);
+      margin-top: 8px;
+      font-size: 10px;
+      color: rgba(180, 175, 200, 0.2);
     }
 
-    /* Start screen (before timer begins) */
-    .start-prompt {
-      display: none;
-    }
+    .start-prompt { display: none; }
+    .start-prompt.visible { display: block; }
+    .timer-container.waiting { opacity: 0.2; }
 
-    .start-prompt.visible {
-      display: block;
-    }
-
-    .timer-container.waiting {
-      opacity: 0.3;
-    }
-
-    /* Keyboard hint */
     .keyboard-hint {
       position: fixed;
-      bottom: 30px;
-      left: 50%;
+      bottom: 28px; left: 50%;
       transform: translateX(-50%);
-      font-size: 12px;
-      color: var(--accent-muted);
-      opacity: 0.5;
+      font-size: 10px;
+      color: rgba(180, 175, 200, 0.15);
+      letter-spacing: 0.5px;
     }
 
     kbd {
-      background: rgba(148, 163, 184, 0.1);
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 1px 5px;
       font-family: inherit;
-      font-size: 11px;
+      font-size: 9px;
     }
 
-    /* Animations for figures */
-    .figure-animated {
-      animation: gentleBob 3s ease-in-out infinite;
-    }
-
-    @keyframes gentleBob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-
-    /* Neck roll specific */
-    .neck-roll-anim .head {
-      animation: neckRollMotion 4s ease-in-out infinite;
-      transform-origin: center bottom;
-    }
-
-    @keyframes neckRollMotion {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(15deg); }
-      50% { transform: rotate(0deg); }
-      75% { transform: rotate(-15deg); }
-    }
-
-    /* Shoulder shrug */
-    .shoulder-shrug-anim .shoulders {
-      animation: shrugMotion 2s ease-in-out infinite;
-    }
-
-    @keyframes shrugMotion {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    /* Wrist circle */
-    .wrist-circle-anim .hand {
-      animation: wristMotion 2s linear infinite;
-      transform-origin: center;
-    }
-
-    @keyframes wristMotion {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* Breathing pulse for mindfulness text */
     .breath-instruction {
-      font-size: 20px;
-      color: var(--text-secondary);
-      margin-bottom: 30px;
-      opacity: 0.8;
-      transition: opacity 0.5s ease;
+      font-size: 16px;
+      color: rgba(180, 175, 200, 0.4);
+      margin-bottom: 28px;
+      font-weight: 300;
+      letter-spacing: 1px;
     }
+
+    /* Animations */
+    .figure-animated { animation: gentleBob 4s ease-in-out infinite; }
+    @keyframes gentleBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+    .neck-roll-anim .head { animation: neckRoll 5s ease-in-out infinite; transform-origin: center bottom; }
+    @keyframes neckRoll { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(12deg); } 75% { transform: rotate(-12deg); } }
+
+    .shoulder-shrug-anim .shoulders { animation: shrug 2.5s ease-in-out infinite; }
+    @keyframes shrug { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+    .wrist-circle-anim .hand { animation: wrist 2.5s linear infinite; transform-origin: center; }
+    @keyframes wrist { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <div class="overlay" id="overlay">
-    <!-- Ambient background elements -->
-    <div class="ambient-glow"></div>
-    <div class="ambient-glow"></div>
+    <div class="bg-layer">
+      <div class="bg-gradient"></div>
+      <div class="bg-orb bg-orb-1"></div>
+      <div class="bg-orb bg-orb-2"></div>
+      <div class="bg-orb bg-orb-3"></div>
+    </div>
 
     <div class="content">
       <div class="activity-queue" id="activityQueue"></div>
+      <div class="activity-type" id="activityType"></div>
+      <h1 class="activity-name" id="activityName"></h1>
+      <p class="activity-instructions" id="activityInstructions"></p>
 
-      <div class="activity-type" id="activityType">Eye Break</div>
-      <h1 class="activity-name" id="activityName">Look Away</h1>
-      <p class="activity-instructions" id="activityInstructions">
-        Look at something 20 feet away for 20 seconds.
-      </p>
-
-      <!-- Breathing instruction (for mindfulness) -->
       <p class="breath-instruction" id="breathInstruction" style="display: none;"></p>
 
-      <!-- Visual containers -->
       <div class="visual-container" id="stretchVisual">
         <svg class="stretch-figure" viewBox="0 0 100 100" id="stretchSvg"></svg>
       </div>
 
-      <div class="breathing-circle" id="breathingCircle">
-        <span class="breathing-text" id="breathingText">breathe</span>
+      <div class="breathing-orb-container" id="breathingOrbContainer">
+        <div class="breathing-orb" id="breathingOrb"></div>
+        <div class="breathing-orb-ring" id="breathingOrbRing"></div>
+        <div class="breathing-label" id="breathingLabel">breathe</div>
       </div>
 
       <svg class="posture-visual" id="postureVisual" viewBox="0 0 100 120">
-        <!-- Sitting figure -->
-        <g id="sitFigure" style="display: none;">
-          <circle cx="50" cy="25" r="10" fill="#94a3b8"/>
-          <path d="M50 35 L50 60" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 60 L35 75 L35 95" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 60 L65 75 L65 95" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 45 L30 55" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 45 L70 55" stroke="#94a3b8" stroke-width="2"/>
-          <rect x="25" y="70" width="50" height="5" rx="2" fill="#64748b" opacity="0.5"/>
+        <g id="sitFigure" style="display:none;">
+          <circle cx="50" cy="25" r="10" fill="rgba(180,175,200,0.5)"/>
+          <path d="M50 35 L50 60" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 60 L35 75 L35 95" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 60 L65 75 L65 95" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 45 L30 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 45 L70 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <rect x="25" y="70" width="50" height="3" rx="1.5" fill="rgba(180,175,200,0.2)"/>
         </g>
-        <!-- Standing figure -->
-        <g id="standFigure" style="display: none;">
-          <circle cx="50" cy="20" r="10" fill="#94a3b8"/>
-          <path d="M50 30 L50 65" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 65 L40 100" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 65 L60 100" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 40 L30 55" stroke="#94a3b8" stroke-width="2"/>
-          <path d="M50 40 L70 55" stroke="#94a3b8" stroke-width="2"/>
+        <g id="standFigure" style="display:none;">
+          <circle cx="50" cy="20" r="10" fill="rgba(180,175,200,0.5)"/>
+          <path d="M50 30 L50 65" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 65 L40 100" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 65 L60 100" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 40 L30 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <path d="M50 40 L70 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
         </g>
       </svg>
 
-      <!-- Timer -->
       <div class="timer-container" id="timerContainer">
         <div class="timer-ring">
-          <svg width="140" height="140" viewBox="0 0 140 140">
-            <circle class="bg" cx="70" cy="70" r="64"/>
-            <circle class="progress" id="timerProgress" cx="70" cy="70" r="64"
-                    stroke-dasharray="402.12" stroke-dashoffset="0"/>
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle class="bg" cx="60" cy="60" r="56"/>
+            <circle class="progress" id="timerProgress" cx="60" cy="60" r="56"
+                    stroke-dasharray="351.86" stroke-dashoffset="0"/>
           </svg>
           <div class="timer-text" id="timerText">20</div>
         </div>
       </div>
 
-      <!-- Start prompt (shown before timer) -->
       <div class="start-prompt" id="startPrompt">
-        <button class="btn btn-primary" id="btnStart" autofocus>Begin</button>
+        <button class="btn btn-primary" id="btnStart" autofocus tabindex="0">begin</button>
       </div>
 
-      <!-- Action buttons (shown during/after timer) -->
       <div class="buttons" id="actionButtons" style="display: none;">
-        <button class="btn btn-primary" id="btnDone">Done</button>
-        <button class="btn btn-secondary" id="btnSnooze">Snooze</button>
+        <button class="btn btn-primary" id="btnDone" tabindex="0">done</button>
+        <button class="btn btn-secondary" id="btnSnooze" tabindex="0">snooze</button>
       </div>
-      <button class="btn btn-text" id="btnSkip">Skip this break</button>
+      <button class="btn btn-skip" id="btnSkip" tabindex="0">skip</button>
       <div class="snooze-info" id="snoozeInfo"></div>
     </div>
 
     <div class="keyboard-hint">
-      <kbd>Enter</kbd> or <kbd>Space</kbd> to begin/advance · <kbd>Esc</kbd> skip
+      <kbd>enter</kbd> begin &middot; <kbd>esc</kbd> skip
     </div>
   </div>
 
@@ -518,251 +474,140 @@
     let timerInterval = null;
     let breathingInterval = null;
     let remainingTime = 0;
-    let snoozesRemaining = 3;
     let timerStarted = false;
 
-    const overlay = document.getElementById('overlay');
-    const activityType = document.getElementById('activityType');
-    const activityName = document.getElementById('activityName');
-    const activityInstructions = document.getElementById('activityInstructions');
-    const timerProgress = document.getElementById('timerProgress');
-    const timerText = document.getElementById('timerText');
-    const timerContainer = document.getElementById('timerContainer');
-    const activityQueue = document.getElementById('activityQueue');
-    const stretchVisual = document.getElementById('stretchVisual');
-    const stretchSvg = document.getElementById('stretchSvg');
-    const breathingCircle = document.getElementById('breathingCircle');
-    const breathingText = document.getElementById('breathingText');
-    const breathInstruction = document.getElementById('breathInstruction');
-    const postureVisual = document.getElementById('postureVisual');
-    const startPrompt = document.getElementById('startPrompt');
-    const actionButtons = document.getElementById('actionButtons');
-    const btnStart = document.getElementById('btnStart');
-    const btnDone = document.getElementById('btnDone');
-    const btnSnooze = document.getElementById('btnSnooze');
-    const btnSkip = document.getElementById('btnSkip');
-    const snoozeInfo = document.getElementById('snoozeInfo');
-    const chimeSound = document.getElementById('chimeSound');
+    const $ = id => document.getElementById(id);
+    const overlay = $('overlay');
+    const activityType = $('activityType');
+    const activityName = $('activityName');
+    const activityInstructions = $('activityInstructions');
+    const timerProgress = $('timerProgress');
+    const timerText = $('timerText');
+    const timerContainer = $('timerContainer');
+    const activityQueue = $('activityQueue');
+    const stretchVisual = $('stretchVisual');
+    const stretchSvg = $('stretchSvg');
+    const breathingOrbContainer = $('breathingOrbContainer');
+    const breathingOrb = $('breathingOrb');
+    const breathingOrbRing = $('breathingOrbRing');
+    const breathingLabel = $('breathingLabel');
+    const breathInstruction = $('breathInstruction');
+    const postureVisual = $('postureVisual');
+    const startPrompt = $('startPrompt');
+    const actionButtons = $('actionButtons');
+    const btnStart = $('btnStart');
+    const btnDone = $('btnDone');
+    const btnSnooze = $('btnSnooze');
+    const btnSkip = $('btnSkip');
+    const snoozeInfo = $('snoozeInfo');
+    const chimeSound = $('chimeSound');
 
-    // Activity type labels (no emojis)
     const typeLabels = {
-      'eye': 'Eye Break',
-      'micro-stretch': 'Quick Stretch',
-      'full-stretch': 'Full Stretch',
+      'eye': 'Eyes',
+      'micro-stretch': 'Stretch',
+      'full-stretch': 'Stretch',
       'posture': 'Posture',
-      'walk': 'Movement',
-      'breathing': 'Mindfulness'
+      'walk': 'Move',
+      'breathing': 'Breathe'
     };
 
-    // Stretch SVG figures
     const stretchFigures = {
-      'neck-roll': `
-        <g class="neck-roll-anim figure-animated">
-          <circle class="head" cx="50" cy="25" r="10"/>
-          <line x1="50" y1="35" x2="50" y2="65"/>
-          <line x1="35" y1="50" x2="65" y2="50"/>
-          <line x1="50" y1="65" x2="38" y2="90"/>
-          <line x1="50" y1="65" x2="62" y2="90"/>
-        </g>
-      `,
-      'shoulder-shrug': `
-        <g class="shoulder-shrug-anim">
-          <circle cx="50" cy="22" r="9"/>
-          <line x1="50" y1="31" x2="50" y2="60"/>
-          <g class="shoulders">
-            <line x1="35" y1="42" x2="65" y2="42"/>
-            <line x1="35" y1="42" x2="28" y2="58"/>
-            <line x1="65" y1="42" x2="72" y2="58"/>
-          </g>
-          <line x1="50" y1="60" x2="38" y2="88"/>
-          <line x1="50" y1="60" x2="62" y2="88"/>
-        </g>
-      `,
-      'wrist-circle': `
-        <g class="wrist-circle-anim">
-          <line x1="20" y1="50" x2="50" y2="50"/>
-          <g class="hand">
-            <circle cx="65" cy="50" r="12" stroke-width="2" fill="none" stroke="#94a3b8"/>
-          </g>
-        </g>
-      `,
-      'ankle-circle': `
-        <g class="figure-animated">
-          <line x1="50" y1="20" x2="50" y2="55"/>
-          <ellipse cx="50" cy="72" rx="12" ry="6" stroke="#94a3b8" stroke-width="2" fill="none" style="animation: wristMotion 2s linear infinite; transform-origin: 50px 55px;"/>
-        </g>
-      `,
-      'ankle-stretch': `
-        <g class="figure-animated">
-          <line x1="50" y1="15" x2="50" y2="50"/>
-          <line x1="50" y1="50" x2="50" y2="70"/>
-          <path d="M50 70 L42 85 L58 85 Z"/>
-        </g>
-      `,
-      'spinal-twist': `
-        <g class="figure-animated">
-          <circle cx="50" cy="22" r="9"/>
-          <path d="M50 31 Q58 45 50 60"/>
-          <line x1="38" y1="42" x2="62" y2="48"/>
-          <line x1="50" y1="60" x2="40" y2="85"/>
-          <line x1="50" y1="60" x2="60" y2="85"/>
-        </g>
-      `,
-      'back-extension': `
-        <g class="figure-animated">
-          <circle cx="50" cy="28" r="9"/>
-          <path d="M50 37 Q42 52 50 68"/>
-          <line x1="50" y1="45" x2="32" y2="38"/>
-          <line x1="50" y1="45" x2="68" y2="38"/>
-          <line x1="50" y1="68" x2="40" y2="92"/>
-          <line x1="50" y1="68" x2="60" y2="92"/>
-        </g>
-      `,
-      'hamstring': `
-        <g class="figure-animated">
-          <circle cx="35" cy="38" r="8"/>
-          <line x1="35" y1="46" x2="48" y2="65"/>
-          <line x1="48" y1="65" x2="78" y2="65"/>
-          <line x1="35" y1="50" x2="22" y2="62"/>
-        </g>
-      `,
-      'hip-flexor': `
-        <g class="figure-animated">
-          <circle cx="50" cy="20" r="8"/>
-          <line x1="50" y1="28" x2="50" y2="52"/>
-          <line x1="50" y1="52" x2="38" y2="78"/>
-          <line x1="50" y1="52" x2="65" y2="88"/>
-          <line x1="50" y1="38" x2="35" y2="48"/>
-          <line x1="50" y1="38" x2="65" y2="48"/>
-        </g>
-      `,
-      'chest-stretch': `
-        <g class="figure-animated">
-          <circle cx="50" cy="22" r="8"/>
-          <line x1="50" y1="30" x2="50" y2="58"/>
-          <line x1="50" y1="40" x2="28" y2="30"/>
-          <line x1="50" y1="40" x2="72" y2="30"/>
-          <line x1="50" y1="58" x2="40" y2="85"/>
-          <line x1="50" y1="58" x2="60" y2="85"/>
-        </g>
-      `,
-      'figure-4': `
-        <g class="figure-animated">
-          <circle cx="50" cy="18" r="8"/>
-          <line x1="50" y1="26" x2="50" y2="50"/>
-          <line x1="50" y1="50" x2="38" y2="75"/>
-          <line x1="50" y1="50" x2="62" y2="62"/>
-          <line x1="62" y1="62" x2="45" y2="62"/>
-        </g>
-      `,
-      'calf-stretch': `
-        <g class="figure-animated">
-          <circle cx="42" cy="28" r="8"/>
-          <line x1="42" y1="36" x2="50" y2="55"/>
-          <line x1="50" y1="55" x2="38" y2="88"/>
-          <line x1="50" y1="55" x2="68" y2="82"/>
-          <line x1="42" y1="42" x2="28" y2="48"/>
-          <line x1="42" y1="42" x2="56" y2="42"/>
-        </g>
-      `
+      'neck-roll': '<g class="neck-roll-anim figure-animated"><circle class="head" cx="50" cy="25" r="10"/><line x1="50" y1="35" x2="50" y2="65"/><line x1="35" y1="50" x2="65" y2="50"/><line x1="50" y1="65" x2="38" y2="90"/><line x1="50" y1="65" x2="62" y2="90"/></g>',
+      'shoulder-shrug': '<g class="shoulder-shrug-anim"><circle cx="50" cy="22" r="9"/><line x1="50" y1="31" x2="50" y2="60"/><g class="shoulders"><line x1="35" y1="42" x2="65" y2="42"/><line x1="35" y1="42" x2="28" y2="58"/><line x1="65" y1="42" x2="72" y2="58"/></g><line x1="50" y1="60" x2="38" y2="88"/><line x1="50" y1="60" x2="62" y2="88"/></g>',
+      'wrist-circle': '<g class="wrist-circle-anim"><line x1="20" y1="50" x2="50" y2="50"/><g class="hand"><circle cx="65" cy="50" r="12" stroke-width="1.5" fill="none" stroke="rgba(180,175,200,0.6)"/></g></g>',
+      'ankle-circle': '<g class="figure-animated"><line x1="50" y1="20" x2="50" y2="55"/><ellipse cx="50" cy="72" rx="12" ry="6" stroke="rgba(180,175,200,0.6)" stroke-width="1.5" fill="none" style="animation:wrist 2.5s linear infinite;transform-origin:50px 55px;"/></g>',
+      'ankle-stretch': '<g class="figure-animated"><line x1="50" y1="15" x2="50" y2="50"/><line x1="50" y1="50" x2="50" y2="70"/><path d="M50 70 L42 85 L58 85 Z"/></g>',
+      'spinal-twist': '<g class="figure-animated"><circle cx="50" cy="22" r="9"/><path d="M50 31 Q58 45 50 60"/><line x1="38" y1="42" x2="62" y2="48"/><line x1="50" y1="60" x2="40" y2="85"/><line x1="50" y1="60" x2="60" y2="85"/></g>',
+      'back-extension': '<g class="figure-animated"><circle cx="50" cy="28" r="9"/><path d="M50 37 Q42 52 50 68"/><line x1="50" y1="45" x2="32" y2="38"/><line x1="50" y1="45" x2="68" y2="38"/><line x1="50" y1="68" x2="40" y2="92"/><line x1="50" y1="68" x2="60" y2="92"/></g>',
+      'hamstring': '<g class="figure-animated"><circle cx="35" cy="38" r="8"/><line x1="35" y1="46" x2="48" y2="65"/><line x1="48" y1="65" x2="78" y2="65"/><line x1="35" y1="50" x2="22" y2="62"/></g>',
+      'hip-flexor': '<g class="figure-animated"><circle cx="50" cy="20" r="8"/><line x1="50" y1="28" x2="50" y2="52"/><line x1="50" y1="52" x2="38" y2="78"/><line x1="50" y1="52" x2="65" y2="88"/><line x1="50" y1="38" x2="35" y2="48"/><line x1="50" y1="38" x2="65" y2="48"/></g>',
+      'chest-stretch': '<g class="figure-animated"><circle cx="50" cy="22" r="8"/><line x1="50" y1="30" x2="50" y2="58"/><line x1="50" y1="40" x2="28" y2="30"/><line x1="50" y1="40" x2="72" y2="30"/><line x1="50" y1="58" x2="40" y2="85"/><line x1="50" y1="58" x2="60" y2="85"/></g>',
+      'figure-4': '<g class="figure-animated"><circle cx="50" cy="18" r="8"/><line x1="50" y1="26" x2="50" y2="50"/><line x1="50" y1="50" x2="38" y2="75"/><line x1="50" y1="50" x2="62" y2="62"/><line x1="62" y1="62" x2="45" y2="62"/></g>',
+      'calf-stretch': '<g class="figure-animated"><circle cx="42" cy="28" r="8"/><line x1="42" y1="36" x2="50" y2="55"/><line x1="50" y1="55" x2="38" y2="88"/><line x1="50" y1="55" x2="68" y2="82"/><line x1="42" y1="42" x2="28" y2="48"/><line x1="42" y1="42" x2="56" y2="42"/></g>'
     };
+
+    const CIRCUMFERENCE = 2 * Math.PI * 56;
 
     function playChime() {
-      try {
-        chimeSound.currentTime = 0;
-        chimeSound.volume = 0.2;
-        chimeSound.play().catch(() => {});
-      } catch (e) {}
+      try { chimeSound.currentTime = 0; chimeSound.volume = 0.1; chimeSound.play().catch(() => {}); } catch {}
+    }
+
+    function clearTimers() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (breathingInterval) { clearInterval(breathingInterval); breathingInterval = null; }
     }
 
     function showBreak(breakData) {
-      console.log('[Overlay] Received break with activities:', breakData.activities.map(a => a.type));
       currentBreakData = breakData;
       currentActivityIndex = 0;
-      snoozesRemaining = 3;
       timerStarted = false;
-
+      clearTimers();
       playChime();
 
-      // Reset snooze button
       btnSnooze.disabled = false;
       btnSnooze.style.opacity = 1;
       snoozeInfo.textContent = '';
 
-      // Build activity queue dots
-      activityQueue.innerHTML = breakData.activities.map((_, i) =>
-        `<div class="queue-dot ${i === 0 ? 'active' : ''}"></div>`
-      ).join('');
+      activityQueue.innerHTML = breakData.activities
+        .map((_, i) => `<div class="queue-dot ${i === 0 ? 'active' : ''}"></div>`)
+        .join('');
 
-      // Show overlay with fade
       overlay.classList.add('visible');
-
       showCurrentActivity();
     }
 
     function showCurrentActivity() {
-      // Clear any existing timer first
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-      if (breathingInterval) {
-        clearInterval(breathingInterval);
-        breathingInterval = null;
-      }
-
-      const activity = currentBreakData.activities[currentActivityIndex];
-      console.log(`[Overlay] Showing activity ${currentActivityIndex + 1}/${currentBreakData.activities.length}: ${activity.type} - ${activity.name}`);
+      clearTimers();
       timerStarted = false;
 
-      // Update queue dots
+      const activity = currentBreakData.activities[currentActivityIndex];
+
+      // Update dots
       document.querySelectorAll('.queue-dot').forEach((dot, i) => {
-        dot.classList.remove('active', 'completed');
-        if (i < currentActivityIndex) dot.classList.add('completed');
-        if (i === currentActivityIndex) dot.classList.add('active');
+        dot.className = 'queue-dot' +
+          (i < currentActivityIndex ? ' completed' : '') +
+          (i === currentActivityIndex ? ' active' : '');
       });
 
-      // Update text
-      activityType.textContent = typeLabels[activity.type] || 'Break';
+      activityType.textContent = typeLabels[activity.type] || '';
       activityName.textContent = activity.name;
       activityInstructions.textContent = activity.instructions;
 
-      // Hide all visuals first
+      // Hide all visuals
       stretchVisual.classList.remove('visible');
-      breathingCircle.classList.remove('visible', 'breathing-in', 'breathing-out', 'breathing-hold');
+      breathingOrbContainer.classList.remove('visible');
+      breathingOrb.className = 'breathing-orb';
+      breathingOrbRing.className = 'breathing-orb-ring';
       postureVisual.classList.remove('visible');
       breathInstruction.style.display = 'none';
-      document.getElementById('sitFigure').style.display = 'none';
-      document.getElementById('standFigure').style.display = 'none';
+      $('sitFigure').style.display = 'none';
+      $('standFigure').style.display = 'none';
 
-      // Show appropriate visual
+      // Show relevant visual
       if (activity.animation && stretchFigures[activity.animation]) {
         stretchVisual.classList.add('visible');
         stretchSvg.innerHTML = stretchFigures[activity.animation];
       } else if (activity.type === 'breathing') {
-        breathingCircle.classList.add('visible');
+        breathingOrbContainer.classList.add('visible');
         breathInstruction.style.display = 'block';
+        breathInstruction.textContent = '';
+        breathingLabel.textContent = 'breathe';
       } else if (activity.type === 'posture') {
         postureVisual.classList.add('visible');
-        if (activity.newPosture === 'stand') {
-          document.getElementById('standFigure').style.display = 'block';
-        } else {
-          document.getElementById('sitFigure').style.display = 'block';
-        }
+        $(activity.newPosture === 'stand' ? 'standFigure' : 'sitFigure').style.display = 'block';
       }
 
-      // Show timer but in waiting state
+      // Timer waiting
       timerContainer.classList.add('visible', 'waiting');
       remainingTime = activity.duration;
       timerText.textContent = remainingTime;
-      updateTimerRing(0);
+      timerProgress.style.strokeDasharray = CIRCUMFERENCE;
+      timerProgress.style.strokeDashoffset = 0;
 
-      // Show start button, hide action buttons
       startPrompt.classList.add('visible');
       actionButtons.style.display = 'none';
 
-      // Focus the Begin button so Enter/click works immediately
-      setTimeout(() => btnStart.focus(), 50);
+      requestAnimationFrame(() => btnStart.focus());
     }
 
     function startTimer() {
@@ -773,66 +618,40 @@
       const duration = activity.duration;
       remainingTime = duration;
 
-      // Hide start, show actions
       startPrompt.classList.remove('visible');
       actionButtons.style.display = 'flex';
       timerContainer.classList.remove('waiting');
 
-      // Start breathing animation if mindfulness
-      if (activity.type === 'breathing') {
-        startBreathingCycle();
-      }
+      if (activity.type === 'breathing') startBreathingCycle();
 
-      const circumference = 2 * Math.PI * 64;
-      timerProgress.style.strokeDasharray = circumference;
-
-      if (timerInterval) clearInterval(timerInterval);
-
-      function updateTimer() {
+      function tick() {
         timerText.textContent = remainingTime;
         const progress = (duration - remainingTime) / duration;
-        timerProgress.style.strokeDashoffset = circumference * (1 - progress);
+        timerProgress.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
         if (remainingTime <= 0) {
-          clearInterval(timerInterval);
-          if (breathingInterval) clearInterval(breathingInterval);
+          clearTimers();
           nextActivity();
         } else {
           remainingTime--;
         }
       }
 
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 1000);
-    }
-
-    function updateTimerRing(progress) {
-      const circumference = 2 * Math.PI * 64;
-      timerProgress.style.strokeDasharray = circumference;
-      timerProgress.style.strokeDashoffset = circumference * (1 - progress);
+      tick();
+      timerInterval = setInterval(tick, 1000);
     }
 
     function startBreathingCycle() {
-      // 4-4-4 breathing: 4s in, 4s hold, 4s out
-      let phase = 0; // 0=in, 1=hold, 2=out
-      const phases = ['in', 'hold', 'out'];
-      const instructions = ['Breathe in slowly...', 'Hold...', 'Breathe out slowly...'];
+      let phase = 0;
+      const labels = ['in', 'hold', 'out'];
+      const messages = ['breathe in...', 'hold...', 'release...'];
+      const orbClasses = ['inhale', 'hold', ''];
 
       function nextPhase() {
-        breathingCircle.classList.remove('breathing-in', 'breathing-out', 'breathing-hold');
-
-        if (phase === 0) {
-          breathingCircle.classList.add('breathing-in');
-          breathingText.textContent = 'in';
-        } else if (phase === 1) {
-          breathingCircle.classList.add('breathing-hold');
-          breathingText.textContent = 'hold';
-        } else {
-          breathingCircle.classList.add('breathing-out');
-          breathingText.textContent = 'out';
-        }
-
-        breathInstruction.textContent = instructions[phase];
+        breathingOrb.className = 'breathing-orb' + (orbClasses[phase] ? ' ' + orbClasses[phase] : '');
+        breathingOrbRing.className = 'breathing-orb-ring' + (orbClasses[phase] ? ' ' + orbClasses[phase] : '');
+        breathingLabel.textContent = labels[phase];
+        breathInstruction.textContent = messages[phase];
         phase = (phase + 1) % 3;
       }
 
@@ -841,11 +660,7 @@
     }
 
     function nextActivity() {
-      if (breathingInterval) {
-        clearInterval(breathingInterval);
-        breathingInterval = null;
-      }
-
+      clearTimers();
       currentActivityIndex++;
       if (currentActivityIndex >= currentBreakData.activities.length) {
         completeBreak();
@@ -855,93 +670,35 @@
     }
 
     function completeBreak() {
-      if (timerInterval) clearInterval(timerInterval);
-      if (breathingInterval) clearInterval(breathingInterval);
+      clearTimers();
       overlay.classList.remove('visible');
       ipcRenderer.send('break-complete');
     }
 
-    function snoozeBreak() {
-      ipcRenderer.send('break-snooze');
-    }
-
     function skipBreak() {
-      if (timerInterval) clearInterval(timerInterval);
-      if (breathingInterval) clearInterval(breathingInterval);
+      clearTimers();
       overlay.classList.remove('visible');
       ipcRenderer.send('break-skip');
     }
 
-    // Event listeners
     btnStart.addEventListener('click', startTimer);
-    btnDone.addEventListener('click', nextActivity); // Advance to next activity, not complete entire break
-    btnSnooze.addEventListener('click', snoozeBreak);
+    btnDone.addEventListener('click', nextActivity);
+    btnSnooze.addEventListener('click', () => ipcRenderer.send('break-snooze'));
     btnSkip.addEventListener('click', skipBreak);
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      // Escape to skip
-      if (e.code === 'Escape') {
-        e.preventDefault();
-        skipBreak();
-        return;
-      }
-      // Enter or Space to start/advance
+      if (e.code === 'Escape') { e.preventDefault(); skipBreak(); return; }
       if (e.code === 'Space' || e.code === 'Enter' || e.code === 'NumpadEnter') {
         e.preventDefault();
-        if (!timerStarted) {
-          startTimer();
-        } else {
-          // Move to next activity (not complete entire break)
-          nextActivity();
-        }
+        timerStarted ? nextActivity() : startTimer();
       }
     });
 
-    // Focus the document when it loads to ensure clicks work
-    window.addEventListener('focus', () => {
-      if (!timerStarted) {
-        setTimeout(() => btnStart.focus(), 50);
-      }
-    });
+    ipcRenderer.on('show-break', (_, breakData) => showBreak(breakData));
 
-    // Also capture any click on the overlay to ensure we have focus
-    overlay.addEventListener('click', (e) => {
-      // If clicking on the overlay background (not a button), focus the start button
-      if (e.target === overlay || e.target.classList.contains('content') || e.target.classList.contains('ambient-glow')) {
-        if (!timerStarted && startPrompt.classList.contains('visible')) {
-          btnStart.focus();
-        }
-      }
-    });
-
-    // IPC listeners
-    ipcRenderer.on('show-break', (event, breakData) => {
-      showBreak(breakData);
-      // Aggressive focus attempts
-      const focusTimes = [0, 50, 100, 200, 400];
-      focusTimes.forEach(delay => {
-        setTimeout(() => {
-          window.focus();
-          document.body.focus();
-          if (!timerStarted && btnStart) {
-            btnStart.focus();
-          }
-        }, delay);
-      });
-    });
-
-    ipcRenderer.on('snooze-result', (event, result) => {
-      if (result.snoozed) {
-        if (timerInterval) clearInterval(timerInterval);
-        if (breathingInterval) clearInterval(breathingInterval);
-        overlay.classList.remove('visible');
-        snoozesRemaining = result.remaining;
-      } else {
-        snoozeInfo.textContent = 'No snoozes remaining';
-        btnSnooze.disabled = true;
-        btnSnooze.style.opacity = 0.5;
-      }
+    ipcRenderer.on('snooze-result', (_, result) => {
+      if (result.snoozed) { clearTimers(); overlay.classList.remove('visible'); }
+      else { snoozeInfo.textContent = 'No snoozes remaining'; btnSnooze.disabled = true; btnSnooze.style.opacity = 0.5; }
     });
   </script>
 </body>
