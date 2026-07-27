@@ -310,7 +310,7 @@ class BreakScheduler {
       type: 'combo',
       name: ms.name,
       duration: Math.max(20, ms.duration),
-      instructions: `Rest your eyes on something far away while you stretch. ${ms.instructions}`,
+      instructions: `Fix your gaze on something at least 20 feet away — out a window or across the room — and keep it there while you stretch. ${ms.instructions}`,
       animation: ms.animation
     });
     microStretchIndex = (microStretchIndex + 1) % microStretches.length;
@@ -370,7 +370,7 @@ class BreakScheduler {
       activities: [
         {
           type: 'combo', name: ms.name, duration: Math.max(20, ms.duration),
-          instructions: `Rest your eyes on something far away while you stretch. ${ms.instructions}`,
+          instructions: `Fix your gaze on something at least 20 feet away — out a window or across the room — and keep it there while you stretch. ${ms.instructions}`,
           animation: ms.animation
         },
         { type: 'breathing', name: 'Mindful Breathing', duration: 36, instructions: 'Follow the circle. Breathe in for 4 seconds, hold for 4, breathe out for 4.' }
@@ -520,7 +520,7 @@ function updateTrayMenu() {
     { label: 'Test break', click: () => {
       showBreakOverlay({
         activities: [
-          { type: 'combo', name: 'Neck Rolls', duration: 5, instructions: 'Rest your eyes on something far away while you stretch. Slowly roll your head in a circle.', animation: 'neck-roll' },
+          { type: 'combo', name: 'Neck Rolls', duration: 5, instructions: 'Fix your gaze on something at least 20 feet away and keep it there while you stretch. Slowly roll your head in a circle.', animation: 'neck-roll' },
           { type: 'breathing', name: 'Mindful Breathing', duration: 12, instructions: 'Follow the circle. Breathe in for 4 seconds, hold for 4, breathe out for 4.' }
         ],
         cycleNumber: 0
