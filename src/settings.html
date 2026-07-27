@@ -7,370 +7,364 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --ink: #171511;
+      --ink-deep: #121009;
+      --ivory: #e8e2d3;
+      --stone: #8d8674;
+      --serif: 'Iowan Old Style', 'Palatino', 'Times New Roman', Georgia, serif;
+    }
+
     body {
-      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0a0a0f;
+      font-family: var(--serif);
+      background: radial-gradient(ellipse 140% 100% at 50% 0%, #1c1913 0%, var(--ink) 60%, var(--ink-deep) 100%);
       min-height: 100vh;
-      color: rgba(230, 225, 240, 0.85);
+      color: var(--ivory);
       -webkit-app-region: drag;
       -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      padding: 48px 28px 28px;
+      padding: 52px 34px 30px;
       -webkit-app-region: no-drag;
     }
 
     /* Header */
     .header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 34px;
     }
 
     .header h1 {
-      font-size: 18px;
-      font-weight: 300;
-      letter-spacing: 3px;
-      text-transform: lowercase;
-      color: rgba(180, 175, 200, 0.5);
-      margin-bottom: 0;
+      font-size: 26px;
+      font-weight: 400;
+      font-style: italic;
+      color: rgba(232, 226, 211, 0.85);
+      letter-spacing: 0.5px;
     }
 
-    /* Tabs */
+    .header h1::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: rgba(141, 134, 116, 0.35);
+      margin: 18px auto 0;
+    }
+
+    /* Tabs — spaced capitals, hairline underline for the active one */
     .tabs {
       display: flex;
-      gap: 0;
-      margin-bottom: 28px;
+      gap: 30px;
+      margin-bottom: 34px;
       justify-content: center;
-      border-bottom: 1px solid rgba(180, 175, 200, 0.06);
-      padding-bottom: 0;
     }
 
     .tab {
-      padding: 10px 20px;
+      padding: 4px 2px;
       background: transparent;
       border: none;
       border-bottom: 1px solid transparent;
-      margin-bottom: -1px;
-      color: rgba(180, 175, 200, 0.25);
+      color: rgba(141, 134, 116, 0.5);
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 11px;
-      font-family: inherit;
-      letter-spacing: 2px;
-      text-transform: lowercase;
+      transition: color 0.4s ease, border-color 0.4s ease;
+      font-size: 10px;
+      font-family: var(--serif);
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
-    .tab:hover { color: rgba(180, 175, 200, 0.45); }
+    .tab:hover { color: rgba(232, 226, 211, 0.6); }
 
     .tab.active {
-      color: rgba(180, 175, 200, 0.6);
-      border-bottom-color: rgba(180, 175, 200, 0.3);
+      color: rgba(232, 226, 211, 0.85);
+      border-bottom-color: rgba(232, 226, 211, 0.4);
     }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Cards */
-    .card {
-      background: rgba(180, 175, 200, 0.02);
-      border-radius: 14px;
-      padding: 22px;
-      margin-bottom: 14px;
-      border: 1px solid rgba(180, 175, 200, 0.04);
+    /* Sections — no cards; a heading over a hairline, like a book chapter */
+    .section {
+      margin-bottom: 34px;
     }
 
-    .card h3 {
-      font-size: 9px;
-      font-weight: 500;
-      margin-bottom: 18px;
-      color: rgba(180, 175, 200, 0.25);
+    .section h3 {
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(141, 134, 116, 0.6);
       text-transform: uppercase;
       letter-spacing: 3px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(141, 134, 116, 0.18);
+      margin-bottom: 16px;
     }
 
     /* Stats */
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       text-align: center;
-    }
-
-    .stat {
-      padding: 18px 10px;
-      border-radius: 12px;
-      background: rgba(180, 175, 200, 0.02);
-      border: 1px solid rgba(180, 175, 200, 0.03);
+      padding: 8px 0 4px;
     }
 
     .stat-value {
-      font-size: 30px;
-      font-weight: 200;
+      font-size: 34px;
+      font-weight: 400;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      color: rgba(232, 226, 211, 0.85);
+      font-variant-numeric: tabular-nums;
     }
+
+    .stat.skipped .stat-value { color: rgba(141, 134, 116, 0.55); }
+    .stat.streak .stat-value { color: rgba(232, 226, 211, 0.65); }
 
     .stat-label {
       font-size: 9px;
-      color: rgba(180, 175, 200, 0.25);
+      color: rgba(141, 134, 116, 0.5);
       text-transform: uppercase;
       letter-spacing: 2px;
     }
 
-    .stat.completed .stat-value { color: rgba(140, 200, 170, 0.7); }
-    .stat.skipped .stat-value { color: rgba(200, 150, 150, 0.5); }
-    .stat.streak .stat-value { color: rgba(200, 185, 140, 0.6); }
-
     .progress-bar {
-      height: 2px;
-      background: rgba(180, 175, 200, 0.04);
-      border-radius: 1px;
+      height: 1px;
+      background: rgba(141, 134, 116, 0.15);
       overflow: hidden;
-      margin-top: 18px;
+      margin-top: 20px;
     }
 
     .progress-fill {
       height: 100%;
-      background: rgba(140, 200, 170, 0.4);
-      border-radius: 1px;
+      background: rgba(232, 226, 211, 0.5);
       transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Toggles */
+    /* Rows */
     .toggle-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
     }
 
     .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .toggle-row:first-of-type { padding-top: 0; }
+    .toggle-row:first-of-type { padding-top: 2px; }
 
     .toggle-info h4 {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       margin-bottom: 3px;
-      color: rgba(230, 225, 240, 0.6);
+      color: rgba(232, 226, 211, 0.75);
     }
 
     .toggle-info p {
-      font-size: 11px;
-      color: rgba(180, 175, 200, 0.2);
+      font-size: 12px;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.55);
     }
 
+    /* Toggle — hairline oval with a small dot */
     .toggle {
-      width: 38px;
-      height: 20px;
-      background: rgba(180, 175, 200, 0.08);
+      width: 36px;
+      height: 19px;
+      background: transparent;
+      border: 1px solid rgba(141, 134, 116, 0.4);
       border-radius: 10px;
       position: relative;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: border-color 0.3s ease;
       flex-shrink: 0;
     }
 
-    .toggle.active { background: rgba(140, 200, 170, 0.3); }
+    .toggle.active { border-color: rgba(232, 226, 211, 0.6); }
 
     .toggle::after {
       content: '';
       position: absolute;
-      width: 14px; height: 14px;
-      background: rgba(230, 225, 240, 0.6);
+      width: 9px; height: 9px;
+      background: rgba(141, 134, 116, 0.6);
       border-radius: 50%;
-      top: 3px; left: 3px;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      top: 4px; left: 5px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
     }
 
     .toggle.active::after {
-      transform: translateX(18px);
-      background: rgba(230, 225, 240, 0.8);
+      transform: translateX(16px);
+      background: rgba(232, 226, 211, 0.9);
     }
 
-    /* Schedule */
+    /* Schedule rows */
     .schedule-item {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       gap: 14px;
-      padding: 13px 0;
-      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
     }
 
     .schedule-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .schedule-item:first-child { padding-top: 0; }
-
-    .schedule-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(180, 175, 200, 0.15);
-      flex-shrink: 0;
-    }
+    .schedule-item:first-child { padding-top: 2px; }
 
     .schedule-info { flex: 1; }
 
     .schedule-info h4 {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       margin-bottom: 2px;
-      color: rgba(230, 225, 240, 0.6);
+      color: rgba(232, 226, 211, 0.75);
     }
 
     .schedule-info p {
-      font-size: 11px;
-      color: rgba(180, 175, 200, 0.2);
+      font-size: 12px;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.55);
     }
 
     .schedule-time {
       font-size: 11px;
-      color: rgba(180, 175, 200, 0.2);
-      letter-spacing: 0.5px;
+      color: rgba(141, 134, 116, 0.5);
+      letter-spacing: 1px;
+      font-variant-numeric: tabular-nums;
     }
 
     /* Recent breaks */
-    .recent-breaks {
-      max-height: 180px;
-      overflow-y: auto;
-    }
+    .recent-breaks { max-height: 170px; overflow-y: auto; }
 
     .break-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
-      font-size: 12px;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(141, 134, 116, 0.08);
     }
 
     .break-item:last-child { border-bottom: none; }
 
-    .break-time { color: rgba(180, 175, 200, 0.2); font-size: 11px; }
+    .break-time {
+      color: rgba(141, 134, 116, 0.55);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
 
     .break-status {
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 9px;
-      text-transform: lowercase;
-      letter-spacing: 1px;
+      font-size: 12px;
+      font-style: italic;
     }
 
-    .break-status.completed {
-      background: rgba(140, 200, 170, 0.08);
-      color: rgba(140, 200, 170, 0.5);
-    }
-
-    .break-status.skipped {
-      background: rgba(200, 150, 150, 0.08);
-      color: rgba(200, 150, 150, 0.4);
-    }
+    .break-status.completed { color: rgba(232, 226, 211, 0.6); }
+    .break-status.skipped { color: rgba(141, 134, 116, 0.4); }
 
     /* Shortcuts */
     .shortcut-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(180, 175, 200, 0.03);
-      font-size: 12px;
-      color: rgba(230, 225, 240, 0.4);
+      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
+      font-size: 13px;
+      color: rgba(232, 226, 211, 0.6);
     }
 
     .shortcut-row:last-child { border-bottom: none; }
 
     kbd {
-      background: rgba(180, 175, 200, 0.04);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 10px;
-      color: rgba(180, 175, 200, 0.3);
-      border: 1px solid rgba(180, 175, 200, 0.04);
+      font-family: var(--serif);
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(141, 134, 116, 0.7);
     }
 
-    /* Stretch list */
+    /* Stretch rotation */
     .stretch-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
+      padding-top: 2px;
     }
 
     .stretch-list h4 {
       font-size: 9px;
-      font-weight: 500;
+      font-weight: 400;
       margin-bottom: 10px;
-      color: rgba(180, 175, 200, 0.2);
+      color: rgba(141, 134, 116, 0.5);
       text-transform: uppercase;
       letter-spacing: 2px;
     }
 
     .stretch-list ul {
       list-style: none;
-      color: rgba(180, 175, 200, 0.25);
-      font-size: 12px;
+      color: rgba(232, 226, 211, 0.5);
+      font-size: 13px;
       line-height: 2;
-      font-weight: 300;
     }
 
     .empty-state {
       text-align: center;
-      padding: 24px 16px;
-      color: rgba(180, 175, 200, 0.15);
+      padding: 22px 16px;
+      color: rgba(141, 134, 116, 0.4);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    .note {
       font-size: 12px;
-      font-weight: 300;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.5);
+      line-height: 1.9;
     }
 
     .close-hint {
       text-align: center;
-      margin-top: 18px;
-      font-size: 10px;
-      color: rgba(180, 175, 200, 0.12);
-      letter-spacing: 0.5px;
+      margin-top: 24px;
+      font-size: 11px;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.35);
     }
 
     .motivation {
       text-align: center;
-      padding: 14px;
-      font-size: 13px;
-      color: rgba(180, 175, 200, 0.2);
-      font-weight: 300;
+      padding: 6px 20px 0;
+      font-size: 14px;
       font-style: italic;
-      line-height: 1.6;
+      color: rgba(141, 134, 116, 0.6);
+      line-height: 1.8;
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(180, 175, 200, 0.08); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: rgba(141, 134, 116, 0.2); border-radius: 2px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>wellness</h1>
+      <h1>Wellness</h1>
     </div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="summary">today</button>
-      <button class="tab" data-tab="schedule">schedule</button>
-      <button class="tab" data-tab="settings">settings</button>
+      <button class="tab active" data-tab="summary">Today</button>
+      <button class="tab" data-tab="schedule">Schedule</button>
+      <button class="tab" data-tab="settings">Settings</button>
     </div>
 
     <!-- Summary -->
     <div class="tab-content active" id="summary">
-      <div class="card">
+      <div class="section">
         <div class="stat-grid">
           <div class="stat completed">
             <span class="stat-value" id="completedCount">0</span>
-            <span class="stat-label">done</span>
+            <span class="stat-label">Taken</span>
           </div>
           <div class="stat skipped">
             <span class="stat-value" id="skippedCount">0</span>
-            <span class="stat-label">skipped</span>
+            <span class="stat-label">Skipped</span>
           </div>
           <div class="stat streak">
             <span class="stat-value" id="streakCount">0</span>
-            <span class="stat-label">streak</span>
+            <span class="stat-label">Streak</span>
           </div>
         </div>
         <div class="progress-bar">
@@ -378,63 +372,58 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="section">
         <h3>Recent</h3>
         <div class="recent-breaks" id="recentBreaks">
-          <p class="empty-state">no breaks yet today</p>
+          <p class="empty-state">no pauses yet today</p>
         </div>
       </div>
 
-      <div class="card motivation" id="motivation"></div>
+      <p class="motivation" id="motivation"></p>
     </div>
 
     <!-- Schedule -->
     <div class="tab-content" id="schedule">
-      <div class="card">
-        <h3>Breaks</h3>
+      <div class="section">
+        <h3>Rhythm</h3>
         <div class="schedule-item">
-          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Eyes + stretch</h4>
-            <p>Look away, quick body stretch</p>
+            <h4>Eyes &amp; stretch</h4>
+            <p>gaze twenty feet away while you stretch</p>
           </div>
           <span class="schedule-time">20 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Posture + breathing</h4>
-            <p>Switch sit/stand, mindful breathing</p>
+            <h4>Posture &amp; breath</h4>
+            <p>change position, then settle into breathing</p>
           </div>
           <span class="schedule-time">40 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-dot"></div>
           <div class="schedule-info">
             <h4>Full stretch</h4>
-            <p>Deeper stretches for back, hips, legs</p>
+            <p>deeper work for back, hips, and legs</p>
           </div>
           <span class="schedule-time">100 min</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-dot"></div>
           <div class="schedule-info">
-            <h4>Walk + settle</h4>
-            <p>Walk around, then extended breathing</p>
+            <h4>Walk &amp; settle</h4>
+            <p>five minutes away, then a settling breath</p>
           </div>
           <span class="schedule-time">2 hrs</span>
         </div>
         <div class="schedule-item">
-          <div class="schedule-dot"></div>
           <div class="schedule-info">
             <h4>Mindfulness</h4>
-            <p>Longer guided breathing session</p>
+            <p>a longer, quieter sitting</p>
           </div>
           <span class="schedule-time">4 hrs</span>
         </div>
       </div>
 
-      <div class="card">
+      <div class="section">
         <h3>Rotation</h3>
         <div class="stretch-list">
           <div>
@@ -465,54 +454,55 @@
 
     <!-- Settings -->
     <div class="tab-content" id="settings">
-      <div class="card">
+      <div class="section">
+        <h3>Preferences</h3>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Pomodoro mode</h4>
-            <p>25-minute focus sessions</p>
+            <h4>Pomodoro</h4>
+            <p>twenty-five minute focus sessions</p>
           </div>
           <div class="toggle" id="pomodoroToggle"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
             <h4>Launch on startup</h4>
-            <p>Start when you log in</p>
+            <p>begin when you log in</p>
           </div>
           <div class="toggle active" id="startupToggle"></div>
         </div>
       </div>
 
-      <div class="card">
+      <div class="section">
         <h3>Shortcuts</h3>
         <div class="shortcut-row">
-          <span>Pause / resume</span>
-          <kbd>Cmd+Shift+P</kbd>
+          <span>Pause or resume</span>
+          <kbd>&#8984; &#8679; P</kbd>
         </div>
         <div class="shortcut-row">
-          <span>Begin / advance</span>
-          <kbd>Enter</kbd>
+          <span>Begin, advance</span>
+          <kbd>return</kbd>
         </div>
         <div class="shortcut-row">
-          <span>Skip break</span>
-          <kbd>Esc</kbd>
+          <span>Skip</span>
+          <kbd>esc</kbd>
         </div>
       </div>
 
-      <div class="card">
-        <p style="font-size: 11px; color: rgba(180,175,200,0.15); line-height: 1.8; font-weight: 300;">
-          Auto-pauses during calls and fullscreen apps.
-          Detects Zoom, Google Meet, Slack, FaceTime.
+      <div class="section">
+        <h3>Quiet hours</h3>
+        <p class="note">
+          Pauses hold their silence during calls and fullscreen work &mdash;
+          Zoom, Google Meet, Slack huddles, FaceTime.
         </p>
       </div>
     </div>
 
-    <p class="close-hint">close to hide &middot; lives in your menu bar</p>
+    <p class="close-hint">closing hides the window &mdash; the app lives in your menu bar</p>
   </div>
 
   <script>
     const { ipcRenderer } = require('electron');
 
-    // Tabs
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -522,7 +512,6 @@
       });
     });
 
-    // Toggles
     const pomodoroToggle = document.getElementById('pomodoroToggle');
     const startupToggle = document.getElementById('startupToggle');
 
@@ -536,14 +525,12 @@
       ipcRenderer.send('set-launch-on-startup', startupToggle.classList.contains('active'));
     });
 
-    // Stats
     function loadStats() { ipcRenderer.send('get-stats'); }
 
     ipcRenderer.on('stats-data', (_, stats) => {
       document.getElementById('completedCount').textContent = stats.completed || 0;
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
 
-      // Streak
       let streak = 0;
       if (stats.breaks) {
         for (let i = stats.breaks.length - 1; i >= 0; i--) {
@@ -560,14 +547,15 @@
       const recentBreaks = document.getElementById('recentBreaks');
       if (stats.breaks && stats.breaks.length > 0) {
         recentBreaks.innerHTML = stats.breaks.slice(-8).reverse().map(b => {
-          const time = new Date(b.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const time = new Date(b.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+          const word = b.status === 'completed' ? 'taken' : b.status;
           return `<div class="break-item">
             <span class="break-time">${time}</span>
-            <span class="break-status ${b.status}">${b.status}</span>
+            <span class="break-status ${b.status}">${word}</span>
           </div>`;
         }).join('');
       } else {
-        recentBreaks.innerHTML = '<p class="empty-state">no breaks yet today</p>';
+        recentBreaks.innerHTML = '<p class="empty-state">no pauses yet today</p>';
       }
     });
 
@@ -580,21 +568,18 @@
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
     });
 
-    // Settings
     ipcRenderer.send('get-settings');
     ipcRenderer.on('settings-data', (_, data) => {
       pomodoroToggle.classList.toggle('active', data.pomodoroEnabled);
       startupToggle.classList.toggle('active', data.launchOnStartup);
     });
 
-    // Quote
     const quotes = [
-      "Small pauses, steady gains.",
-      "Your body carries your ambition. Take care of it.",
-      "Rest is not the opposite of work. It's part of it.",
-      "A few breaths can change the rest of your day.",
-      "Movement is how the body thinks.",
-      "The gentlest reminder is sometimes the most important.",
+      'Rest is part of the work.',
+      'The body keeps its own time.',
+      'A few slow breaths can change an afternoon.',
+      'Attention returns to those who pause.',
+      'Nothing is lost by looking away for a moment.'
     ];
     document.getElementById('motivation').textContent = quotes[Math.floor(Math.random() * quotes.length)];
 

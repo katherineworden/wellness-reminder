@@ -7,280 +7,215 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --ink: #171511;
+      --ink-deep: #121009;
+      --ivory: #e8e2d3;
+      --stone: #8d8674;
+      --stone-faint: #55503f;
+      --serif: 'Iowan Old Style', 'Palatino', 'Times New Roman', Georgia, serif;
+    }
+
+    html, body { height: 100%; }
+
     body {
-      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--serif);
       overflow: hidden;
-      background: #0a0a0f;
+      background: var(--ink);
       -webkit-font-smoothing: antialiased;
       cursor: default;
     }
 
     .overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
+      inset: 0;
+      background: radial-gradient(ellipse 120% 90% at 50% 40%, #1c1913 0%, var(--ink) 55%, var(--ink-deep) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity 2s ease;
+      transition: opacity 1.8s ease;
     }
 
     .overlay.visible { opacity: 1; }
 
-    /* Living gradient background that slowly breathes */
-    .bg-layer {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 0;
-    }
-
-    .bg-gradient {
-      position: absolute;
-      width: 100%; height: 100%;
-      background: linear-gradient(170deg, #0a0a12 0%, #0e1018 40%, #0d0f16 100%);
-    }
-
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0;
-      transition: opacity 3s ease;
-    }
-
-    .overlay.visible .bg-orb { opacity: 1; }
-
-    .bg-orb-1 {
-      width: 50vw; height: 50vw;
-      top: -10%; left: -10%;
-      background: radial-gradient(circle, rgba(100, 88, 155, 0.16), transparent 70%);
-      animation: orbDrift1 30s ease-in-out infinite;
-    }
-
-    .bg-orb-2 {
-      width: 40vw; height: 40vw;
-      bottom: -5%; right: -5%;
-      background: radial-gradient(circle, rgba(75, 130, 130, 0.11), transparent 70%);
-      animation: orbDrift2 25s ease-in-out infinite;
-    }
-
-    .bg-orb-3 {
-      width: 30vw; height: 30vw;
-      top: 40%; left: 50%;
-      background: radial-gradient(circle, rgba(100, 90, 130, 0.06), transparent 70%);
-      animation: orbDrift3 35s ease-in-out infinite;
-    }
-
-    @keyframes orbDrift1 {
-      0%, 100% { transform: translate(0, 0); }
-      33% { transform: translate(5vw, 3vh); }
-      66% { transform: translate(-3vw, 5vh); }
-    }
-
-    @keyframes orbDrift2 {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-4vw, -3vh); }
-    }
-
-    @keyframes orbDrift3 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(3vw, -2vh) scale(1.1); }
-    }
-
     .content {
       text-align: center;
       position: relative;
-      z-index: 10;
-      max-width: 520px;
+      max-width: 560px;
       padding: 40px;
+      color: var(--ivory);
     }
 
-    /* Progress dots - very subtle */
+    /* Step marks — short hairlines, like section marks in a book */
     .activity-queue {
       display: flex;
-      gap: 16px;
+      gap: 10px;
       justify-content: center;
-      margin-bottom: 60px;
-      opacity: 0.6;
+      align-items: center;
+      margin-bottom: 56px;
+      height: 2px;
     }
 
     .queue-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: rgba(180, 175, 200, 0.2);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 14px;
+      height: 1px;
+      background: rgba(232, 226, 211, 0.14);
+      transition: all 0.9s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
     .queue-dot.active {
-      background: rgba(180, 175, 200, 0.7);
-      box-shadow: 0 0 16px rgba(180, 175, 200, 0.3);
-      transform: scale(2);
+      width: 26px;
+      background: rgba(232, 226, 211, 0.75);
     }
 
-    .queue-dot.completed {
-      background: rgba(180, 175, 200, 0.4);
-    }
+    .queue-dot.completed { background: rgba(232, 226, 211, 0.38); }
 
-    /* Type label */
+    /* Kind of pause — spaced capitals over a hairline */
     .activity-type {
-      font-size: 10px;
-      text-transform: uppercase;
+      font-size: 11px;
       letter-spacing: 5px;
-      color: rgba(180, 175, 200, 0.35);
-      margin-bottom: 20px;
-      font-weight: 500;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 22px;
+      font-weight: 400;
     }
 
-    /* Name - large, ethereal serif */
+    .activity-type::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: rgba(141, 134, 116, 0.35);
+      margin: 20px auto 0;
+    }
+
     .activity-name {
-      font-family: 'New York', ui-serif, Georgia, serif;
-      font-size: 48px;
-      font-weight: 300;
-      margin-bottom: 26px;
+      font-size: 54px;
+      font-weight: 400;
+      font-style: italic;
+      margin-bottom: 30px;
       letter-spacing: 0.5px;
-      color: rgba(232, 228, 242, 0.9);
+      color: var(--ivory);
       line-height: 1.15;
-      text-shadow: 0 0 40px rgba(150, 140, 190, 0.25);
     }
 
-    /* Instructions - gentle guidance */
     .activity-instructions {
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 2.1;
-      margin-bottom: 52px;
-      color: rgba(185, 180, 205, 0.55);
-      max-width: 420px;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.95;
+      margin-bottom: 46px;
+      color: rgba(232, 226, 211, 0.58);
+      max-width: 42ch;
       margin-left: auto;
       margin-right: auto;
     }
 
-    /* Soft fade-up when an activity changes */
-    .fade-in { animation: fadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
-    .fade-in.d1 { animation-delay: 0.08s; }
-    .fade-in.d2 { animation-delay: 0.18s; }
+    /* Entrance — quiet fade-up, staggered */
+    .fade-in { animation: fadeUp 1.1s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
+    .fade-in.d1 { animation-delay: 0.1s; }
+    .fade-in.d2 { animation-delay: 0.22s; }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* === Breathing orb === */
-    .breathing-orb-container {
-      width: 200px; height: 200px;
-      margin: 0 auto 44px;
-      display: none;
-      position: relative;
-    }
-
-    .breathing-orb-container.visible { display: block; }
-
-    .breathing-orb {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 40% 40%,
-        rgba(150, 140, 190, 0.25),
-        rgba(100, 90, 150, 0.1) 60%,
-        transparent 80%);
-      transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .breathing-orb.inhale {
-      width: 160px; height: 160px;
-      background: radial-gradient(circle at 40% 40%,
-        rgba(150, 140, 190, 0.35),
-        rgba(100, 90, 150, 0.15) 60%,
-        transparent 80%);
-    }
-
-    .breathing-orb.hold {
-      width: 160px; height: 160px;
-      background: radial-gradient(circle at 40% 40%,
-        rgba(150, 140, 190, 0.35),
-        rgba(100, 90, 150, 0.15) 60%,
-        transparent 80%);
-    }
-
-    .breathing-orb-ring {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      border: 1px solid rgba(150, 140, 190, 0.08);
-      transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .breathing-orb-ring.inhale,
-    .breathing-orb-ring.hold {
-      width: 180px; height: 180px;
-      border-color: rgba(150, 140, 190, 0.15);
-    }
-
-    .breathing-label {
-      position: absolute;
-      bottom: -8px; left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: rgba(180, 175, 200, 0.35);
-      font-weight: 300;
-      transition: color 1s ease;
-    }
-
-    /* Stretch figures */
+    /* Stretch figures — faint line drawings */
     .visual-container {
-      width: 130px; height: 130px;
-      margin: 0 auto 44px;
+      width: 120px; height: 120px;
+      margin: 0 auto 38px;
       display: none;
-      opacity: 0.4;
     }
 
     .visual-container.visible { display: block; }
 
     .stretch-figure { width: 100%; height: 100%; }
-    .stretch-figure line, .stretch-figure path { stroke: rgba(180, 175, 200, 0.6); stroke-width: 1.5; stroke-linecap: round; fill: none; }
-    .stretch-figure circle { fill: rgba(180, 175, 200, 0.6); }
+    .stretch-figure line, .stretch-figure path {
+      stroke: rgba(232, 226, 211, 0.4);
+      stroke-width: 1.25;
+      stroke-linecap: round;
+      fill: none;
+    }
+    .stretch-figure circle { fill: rgba(232, 226, 211, 0.4); }
+    .stretch-figure circle[data-ring] { fill: none; stroke: rgba(232, 226, 211, 0.4); }
 
-    /* Posture */
+    /* Breathing — a single hairline ring, swelling and settling */
+    .breath-container {
+      width: 220px; height: 220px;
+      margin: 0 auto 48px;
+      display: none;
+      position: relative;
+    }
+
+    .breath-container.visible { display: block; }
+
+    .breath-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 110px; height: 110px;
+      margin: -55px 0 0 -55px;
+      border-radius: 50%;
+      border: 1px solid rgba(232, 226, 211, 0.3);
+      transition: transform 4s cubic-bezier(0.4, 0, 0.35, 1), border-color 4s ease;
+      transform: scale(1);
+    }
+
+    .breath-ring.inhale, .breath-ring.hold {
+      transform: scale(1.62);
+      border-color: rgba(232, 226, 211, 0.5);
+    }
+
+    .breath-word {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-style: italic;
+      font-size: 16px;
+      color: rgba(232, 226, 211, 0.55);
+      letter-spacing: 1px;
+    }
+
+    .breath-instruction {
+      font-size: 17px;
+      font-style: italic;
+      color: rgba(232, 226, 211, 0.5);
+      margin-bottom: 36px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Posture figures */
     .posture-visual {
       width: 100px; height: 100px;
-      margin: 0 auto 44px;
+      margin: 0 auto 48px;
       display: none;
-      opacity: 0.4;
     }
 
     .posture-visual.visible { display: block; }
 
-    /* Timer - just a thin arc and number */
+    /* Timer — a serif numeral inside a hairline ring */
     .timer-container {
-      margin-bottom: 52px;
+      margin-bottom: 44px;
       display: none;
     }
 
     .timer-container.visible { display: block; }
+    .timer-container.waiting { opacity: 0.22; }
 
     .timer-ring {
-      width: 120px; height: 120px;
+      width: 116px; height: 116px;
       margin: 0 auto;
       position: relative;
     }
 
     .timer-ring svg { transform: rotate(-90deg); }
 
-    .timer-ring circle { fill: none; }
-    .timer-ring .bg { stroke: rgba(180, 175, 200, 0.06); stroke-width: 1; }
+    .timer-ring circle { fill: none; stroke-width: 1; }
+    .timer-ring .bg { stroke: rgba(232, 226, 211, 0.1); }
 
     .timer-ring .progress {
-      stroke: rgba(180, 175, 200, 0.3);
-      stroke-width: 1;
+      stroke: rgba(232, 226, 211, 0.45);
       stroke-linecap: round;
       transition: stroke-dashoffset 1s linear;
     }
@@ -289,125 +224,101 @@
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 28px;
-      font-weight: 200;
-      color: rgba(230, 225, 240, 0.6);
+      font-size: 32px;
+      font-weight: 400;
+      color: rgba(232, 226, 211, 0.8);
       font-variant-numeric: tabular-nums;
     }
 
-    /* Buttons - nearly invisible until hovered */
+    /* Actions — plain words, set like print. No pills, no boxes. */
     .btn {
-      padding: 12px 28px;
-      font-size: 12px;
+      background: none;
       border: none;
-      border-radius: 20px;
+      font-family: var(--serif);
       cursor: pointer;
-      transition: all 0.4s ease;
-      font-weight: 400;
-      letter-spacing: 1px;
-      font-family: inherit;
+      transition: color 0.4s ease, border-color 0.4s ease;
       outline: none;
-      text-transform: lowercase;
     }
 
-    .btn:focus-visible { box-shadow: 0 0 0 1px rgba(180, 175, 200, 0.3); }
-
-    .btn-primary {
-      background: rgba(180, 175, 200, 0.08);
-      color: rgba(230, 225, 240, 0.6);
-      border: 1px solid rgba(180, 175, 200, 0.1);
+    .btn-begin {
+      font-size: 15px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(232, 226, 211, 0.82);
+      padding: 6px 2px;
+      border-bottom: 1px solid rgba(232, 226, 211, 0.3);
     }
 
-    .btn-primary:hover, .btn-primary:focus {
-      background: rgba(180, 175, 200, 0.14);
-      color: rgba(230, 225, 240, 0.8);
+    .btn-begin:hover, .btn-begin:focus-visible {
+      color: var(--ivory);
+      border-bottom-color: rgba(232, 226, 211, 0.7);
     }
 
-    .btn-secondary {
-      background: transparent;
-      color: rgba(180, 175, 200, 0.3);
-      border: 1px solid rgba(180, 175, 200, 0.06);
+    .btn-quiet {
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(141, 134, 116, 0.65);
+      padding: 6px 4px;
     }
 
-    .btn-secondary:hover {
-      color: rgba(180, 175, 200, 0.5);
-      border-color: rgba(180, 175, 200, 0.12);
-    }
+    .btn-quiet:hover, .btn-quiet:focus-visible { color: rgba(232, 226, 211, 0.7); }
 
-    .btn-skip {
-      background: transparent;
-      color: rgba(180, 175, 200, 0.15);
-      border: none;
+    .btn-whisper {
       font-size: 11px;
-      padding: 8px 16px;
-      margin-top: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(141, 134, 116, 0.35);
+      padding: 10px 4px;
+      margin-top: 14px;
     }
 
-    .btn-skip:hover { color: rgba(180, 175, 200, 0.35); }
+    .btn-whisper:hover, .btn-whisper:focus-visible { color: rgba(141, 134, 116, 0.7); }
 
     .buttons {
-      display: flex;
-      gap: 12px;
+      display: none;
+      gap: 40px;
       justify-content: center;
-      margin-bottom: 8px;
-    }
-
-    .snooze-info {
-      margin-top: 8px;
-      font-size: 10px;
-      color: rgba(180, 175, 200, 0.2);
+      align-items: baseline;
     }
 
     .start-prompt { display: none; }
     .start-prompt.visible { display: block; }
-    .timer-container.waiting { opacity: 0.2; }
+
+    .snooze-info {
+      margin-top: 14px;
+      font-size: 12px;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.5);
+    }
 
     .keyboard-hint {
       position: fixed;
-      bottom: 28px; left: 50%;
+      bottom: 30px;
+      left: 50%;
       transform: translateX(-50%);
-      font-size: 10px;
-      color: rgba(180, 175, 200, 0.15);
+      font-size: 12px;
+      font-style: italic;
+      color: rgba(141, 134, 116, 0.32);
       letter-spacing: 0.5px;
     }
 
-    kbd {
-      padding: 1px 5px;
-      font-family: inherit;
-      font-size: 9px;
-    }
-
-    .breath-instruction {
-      font-size: 16px;
-      color: rgba(180, 175, 200, 0.4);
-      margin-bottom: 28px;
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
-
-    /* Animations */
-    .figure-animated { animation: gentleBob 4s ease-in-out infinite; }
+    /* Figure motion — barely there */
+    .figure-animated { animation: gentleBob 5s ease-in-out infinite; }
     @keyframes gentleBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-    .neck-roll-anim .head { animation: neckRoll 5s ease-in-out infinite; transform-origin: center bottom; }
-    @keyframes neckRoll { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(12deg); } 75% { transform: rotate(-12deg); } }
+    .neck-roll-anim .head { animation: neckRoll 6s ease-in-out infinite; transform-origin: center bottom; }
+    @keyframes neckRoll { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } }
 
-    .shoulder-shrug-anim .shoulders { animation: shrug 2.5s ease-in-out infinite; }
-    @keyframes shrug { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .shoulder-shrug-anim .shoulders { animation: shrug 3s ease-in-out infinite; }
+    @keyframes shrug { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-    .wrist-circle-anim .hand { animation: wrist 2.5s linear infinite; transform-origin: center; }
+    .wrist-circle-anim .hand { animation: wrist 3s linear infinite; transform-origin: center; }
     @keyframes wrist { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <div class="overlay" id="overlay">
-    <div class="bg-layer">
-      <div class="bg-gradient"></div>
-      <div class="bg-orb bg-orb-1"></div>
-      <div class="bg-orb bg-orb-2"></div>
-      <div class="bg-orb bg-orb-3"></div>
-    </div>
-
     <div class="content">
       <div class="activity-queue" id="activityQueue"></div>
       <div class="activity-type" id="activityType"></div>
@@ -420,58 +331,55 @@
         <svg class="stretch-figure" viewBox="0 0 100 100" id="stretchSvg"></svg>
       </div>
 
-      <div class="breathing-orb-container" id="breathingOrbContainer">
-        <div class="breathing-orb" id="breathingOrb"></div>
-        <div class="breathing-orb-ring" id="breathingOrbRing"></div>
-        <div class="breathing-label" id="breathingLabel">breathe</div>
+      <div class="breath-container" id="breathContainer">
+        <div class="breath-ring" id="breathRing"></div>
+        <div class="breath-word" id="breathWord">breathe</div>
       </div>
 
       <svg class="posture-visual" id="postureVisual" viewBox="0 0 100 120">
         <g id="sitFigure" style="display:none;">
-          <circle cx="50" cy="25" r="10" fill="rgba(180,175,200,0.5)"/>
-          <path d="M50 35 L50 60" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 60 L35 75 L35 95" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 60 L65 75 L65 95" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 45 L30 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 45 L70 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <rect x="25" y="70" width="50" height="3" rx="1.5" fill="rgba(180,175,200,0.2)"/>
+          <circle cx="50" cy="25" r="10" fill="rgba(232,226,211,0.3)"/>
+          <path d="M50 35 L50 60" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 60 L35 75 L35 95" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 60 L65 75 L65 95" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 45 L30 55" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 45 L70 55" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <rect x="25" y="70" width="50" height="2" rx="1" fill="rgba(232,226,211,0.12)"/>
         </g>
         <g id="standFigure" style="display:none;">
-          <circle cx="50" cy="20" r="10" fill="rgba(180,175,200,0.5)"/>
-          <path d="M50 30 L50 65" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 65 L40 100" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 65 L60 100" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 40 L30 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
-          <path d="M50 40 L70 55" stroke="rgba(180,175,200,0.5)" stroke-width="1.5"/>
+          <circle cx="50" cy="20" r="10" fill="rgba(232,226,211,0.3)"/>
+          <path d="M50 30 L50 65" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 65 L40 100" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 65 L60 100" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 40 L30 55" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
+          <path d="M50 40 L70 55" stroke="rgba(232,226,211,0.3)" stroke-width="1.25"/>
         </g>
       </svg>
 
       <div class="timer-container" id="timerContainer">
         <div class="timer-ring">
-          <svg width="120" height="120" viewBox="0 0 120 120">
-            <circle class="bg" cx="60" cy="60" r="56"/>
-            <circle class="progress" id="timerProgress" cx="60" cy="60" r="56"
-                    stroke-dasharray="351.86" stroke-dashoffset="0"/>
+          <svg width="116" height="116" viewBox="0 0 116 116">
+            <circle class="bg" cx="58" cy="58" r="54"/>
+            <circle class="progress" id="timerProgress" cx="58" cy="58" r="54"
+                    stroke-dasharray="339.29" stroke-dashoffset="0"/>
           </svg>
           <div class="timer-text" id="timerText">20</div>
         </div>
       </div>
 
-      <div class="start-prompt" id="startPrompt">
-        <button class="btn btn-primary" id="btnStart" autofocus tabindex="0">begin</button>
+      <div class="start-prompt visible" id="startPrompt">
+        <button class="btn btn-begin" id="btnStart" autofocus>Begin</button>
       </div>
 
-      <div class="buttons" id="actionButtons" style="display: none;">
-        <button class="btn btn-primary" id="btnDone" tabindex="0">done</button>
-        <button class="btn btn-secondary" id="btnSnooze" tabindex="0">snooze</button>
+      <div class="buttons" id="actionButtons">
+        <button class="btn btn-quiet" id="btnDone">Done</button>
+        <button class="btn btn-quiet" id="btnSnooze">Snooze</button>
       </div>
-      <button class="btn btn-skip" id="btnSkip" tabindex="0">skip</button>
+      <div><button class="btn btn-whisper" id="btnSkip">Skip</button></div>
       <div class="snooze-info" id="snoozeInfo"></div>
     </div>
 
-    <div class="keyboard-hint">
-      <kbd>enter</kbd> begin &middot; <kbd>esc</kbd> skip
-    </div>
+    <div class="keyboard-hint">enter to begin &nbsp;&middot;&nbsp; esc to skip</div>
   </div>
 
   <audio id="chimeSound" preload="auto">
@@ -499,10 +407,9 @@
     const activityQueue = $('activityQueue');
     const stretchVisual = $('stretchVisual');
     const stretchSvg = $('stretchSvg');
-    const breathingOrbContainer = $('breathingOrbContainer');
-    const breathingOrb = $('breathingOrb');
-    const breathingOrbRing = $('breathingOrbRing');
-    const breathingLabel = $('breathingLabel');
+    const breathContainer = $('breathContainer');
+    const breathRing = $('breathRing');
+    const breathWord = $('breathWord');
     const breathInstruction = $('breathInstruction');
     const postureVisual = $('postureVisual');
     const startPrompt = $('startPrompt');
@@ -516,19 +423,19 @@
 
     const typeLabels = {
       'eye': 'Eyes',
-      'combo': 'Eyes + Stretch',
+      'combo': 'Eyes & Stretch',
       'micro-stretch': 'Stretch',
       'full-stretch': 'Stretch',
       'posture': 'Posture',
-      'walk': 'Move',
-      'breathing': 'Breathe'
+      'walk': 'Movement',
+      'breathing': 'Breath'
     };
 
     const stretchFigures = {
       'neck-roll': '<g class="neck-roll-anim figure-animated"><circle class="head" cx="50" cy="25" r="10"/><line x1="50" y1="35" x2="50" y2="65"/><line x1="35" y1="50" x2="65" y2="50"/><line x1="50" y1="65" x2="38" y2="90"/><line x1="50" y1="65" x2="62" y2="90"/></g>',
       'shoulder-shrug': '<g class="shoulder-shrug-anim"><circle cx="50" cy="22" r="9"/><line x1="50" y1="31" x2="50" y2="60"/><g class="shoulders"><line x1="35" y1="42" x2="65" y2="42"/><line x1="35" y1="42" x2="28" y2="58"/><line x1="65" y1="42" x2="72" y2="58"/></g><line x1="50" y1="60" x2="38" y2="88"/><line x1="50" y1="60" x2="62" y2="88"/></g>',
-      'wrist-circle': '<g class="wrist-circle-anim"><line x1="20" y1="50" x2="50" y2="50"/><g class="hand"><circle cx="65" cy="50" r="12" stroke-width="1.5" fill="none" stroke="rgba(180,175,200,0.6)"/></g></g>',
-      'ankle-circle': '<g class="figure-animated"><line x1="50" y1="20" x2="50" y2="55"/><ellipse cx="50" cy="72" rx="12" ry="6" stroke="rgba(180,175,200,0.6)" stroke-width="1.5" fill="none" style="animation:wrist 2.5s linear infinite;transform-origin:50px 55px;"/></g>',
+      'wrist-circle': '<g class="wrist-circle-anim"><line x1="20" y1="50" x2="50" y2="50"/><g class="hand"><circle data-ring cx="65" cy="50" r="12" stroke-width="1.25"/></g></g>',
+      'ankle-circle': '<g class="figure-animated"><line x1="50" y1="20" x2="50" y2="55"/><ellipse cx="50" cy="72" rx="12" ry="6" stroke="rgba(232,226,211,0.32)" stroke-width="1.25" fill="none" style="animation:wrist 3s linear infinite;transform-origin:50px 55px;"/></g>',
       'ankle-stretch': '<g class="figure-animated"><line x1="50" y1="15" x2="50" y2="50"/><line x1="50" y1="50" x2="50" y2="70"/><path d="M50 70 L42 85 L58 85 Z"/></g>',
       'spinal-twist': '<g class="figure-animated"><circle cx="50" cy="22" r="9"/><path d="M50 31 Q58 45 50 60"/><line x1="38" y1="42" x2="62" y2="48"/><line x1="50" y1="60" x2="40" y2="85"/><line x1="50" y1="60" x2="60" y2="85"/></g>',
       'back-extension': '<g class="figure-animated"><circle cx="50" cy="28" r="9"/><path d="M50 37 Q42 52 50 68"/><line x1="50" y1="45" x2="32" y2="38"/><line x1="50" y1="45" x2="68" y2="38"/><line x1="50" y1="68" x2="40" y2="92"/><line x1="50" y1="68" x2="60" y2="92"/></g>',
@@ -539,7 +446,7 @@
       'calf-stretch': '<g class="figure-animated"><circle cx="42" cy="28" r="8"/><line x1="42" y1="36" x2="50" y2="55"/><line x1="50" y1="55" x2="38" y2="88"/><line x1="50" y1="55" x2="68" y2="82"/><line x1="42" y1="42" x2="28" y2="48"/><line x1="42" y1="42" x2="56" y2="42"/></g>'
     };
 
-    const CIRCUMFERENCE = 2 * Math.PI * 56;
+    const CIRCUMFERENCE = 2 * Math.PI * 54;
 
     function playChime() {
       try { chimeSound.currentTime = 0; chimeSound.volume = 0.1; chimeSound.play().catch(() => {}); } catch {}
@@ -575,7 +482,6 @@
 
       const activity = currentBreakData.activities[currentActivityIndex];
 
-      // Update dots
       document.querySelectorAll('.queue-dot').forEach((dot, i) => {
         dot.className = 'queue-dot' +
           (i < currentActivityIndex ? ' completed' : '') +
@@ -586,39 +492,36 @@
       activityName.textContent = activity.name;
       activityInstructions.textContent = activity.instructions;
 
-      // Re-trigger the fade-up entrance on each activity
-      [[activityType, ''], [activityName, 'd1'], [activityInstructions, 'd2']].forEach(([el, delay]) => {
+      // Quiet staggered entrance
+      [[activityType, ''], [activityName, 'd1'], [activityInstructions, 'd2']].forEach(([el, d]) => {
         el.classList.remove('fade-in', 'd1', 'd2');
         void el.offsetWidth;
         el.classList.add('fade-in');
-        if (delay) el.classList.add(delay);
+        if (d) el.classList.add(d);
       });
 
       // Hide all visuals
       stretchVisual.classList.remove('visible');
-      breathingOrbContainer.classList.remove('visible');
-      breathingOrb.className = 'breathing-orb';
-      breathingOrbRing.className = 'breathing-orb-ring';
+      breathContainer.classList.remove('visible');
+      breathRing.className = 'breath-ring';
       postureVisual.classList.remove('visible');
       breathInstruction.style.display = 'none';
       $('sitFigure').style.display = 'none';
       $('standFigure').style.display = 'none';
 
-      // Show relevant visual
       if (activity.animation && stretchFigures[activity.animation]) {
         stretchVisual.classList.add('visible');
         stretchSvg.innerHTML = stretchFigures[activity.animation];
       } else if (activity.type === 'breathing') {
-        breathingOrbContainer.classList.add('visible');
+        breathContainer.classList.add('visible');
         breathInstruction.style.display = 'block';
         breathInstruction.textContent = '';
-        breathingLabel.textContent = 'breathe';
+        breathWord.textContent = 'breathe';
       } else if (activity.type === 'posture') {
         postureVisual.classList.add('visible');
         $(activity.newPosture === 'stand' ? 'standFigure' : 'sitFigure').style.display = 'block';
       }
 
-      // Timer waiting
       timerContainer.classList.add('visible', 'waiting');
       remainingTime = activity.duration;
       timerText.textContent = remainingTime;
@@ -664,15 +567,14 @@
 
     function startBreathingCycle() {
       let phase = 0;
-      const labels = ['in', 'hold', 'out'];
-      const messages = ['breathe in...', 'hold...', 'release...'];
-      const orbClasses = ['inhale', 'hold', ''];
+      const words = ['in', 'hold', 'out'];
+      const lines = ['breathe in slowly', 'hold', 'let it go'];
+      const ringClasses = ['inhale', 'hold', ''];
 
       function nextPhase() {
-        breathingOrb.className = 'breathing-orb' + (orbClasses[phase] ? ' ' + orbClasses[phase] : '');
-        breathingOrbRing.className = 'breathing-orb-ring' + (orbClasses[phase] ? ' ' + orbClasses[phase] : '');
-        breathingLabel.textContent = labels[phase];
-        breathInstruction.textContent = messages[phase];
+        breathRing.className = 'breath-ring' + (ringClasses[phase] ? ' ' + ringClasses[phase] : '');
+        breathWord.textContent = words[phase];
+        breathInstruction.textContent = lines[phase];
         phase = (phase + 1) % 3;
       }
 
@@ -719,7 +621,7 @@
 
     ipcRenderer.on('snooze-result', (_, result) => {
       if (result.snoozed) { clearTimers(); overlay.classList.remove('visible'); }
-      else { snoozeInfo.textContent = 'No snoozes remaining'; btnSnooze.disabled = true; btnSnooze.style.opacity = 0.5; }
+      else { snoozeInfo.textContent = 'no snoozes remaining'; btnSnooze.disabled = true; btnSnooze.style.opacity = 0.5; }
     });
   </script>
 </body>
