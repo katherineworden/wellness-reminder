@@ -56,14 +56,14 @@
     .bg-orb-1 {
       width: 50vw; height: 50vw;
       top: -10%; left: -10%;
-      background: radial-gradient(circle, rgba(90, 80, 140, 0.12), transparent 70%);
+      background: radial-gradient(circle, rgba(100, 88, 155, 0.16), transparent 70%);
       animation: orbDrift1 30s ease-in-out infinite;
     }
 
     .bg-orb-2 {
       width: 40vw; height: 40vw;
       bottom: -5%; right: -5%;
-      background: radial-gradient(circle, rgba(70, 120, 120, 0.08), transparent 70%);
+      background: radial-gradient(circle, rgba(75, 130, 130, 0.11), transparent 70%);
       animation: orbDrift2 25s ease-in-out infinite;
     }
 
@@ -134,26 +134,38 @@
       font-weight: 500;
     }
 
-    /* Name - large, ethereal */
+    /* Name - large, ethereal serif */
     .activity-name {
-      font-size: 46px;
-      font-weight: 200;
-      margin-bottom: 24px;
-      letter-spacing: -1px;
-      color: rgba(230, 225, 240, 0.85);
-      line-height: 1.1;
+      font-family: 'New York', ui-serif, Georgia, serif;
+      font-size: 48px;
+      font-weight: 300;
+      margin-bottom: 26px;
+      letter-spacing: 0.5px;
+      color: rgba(232, 228, 242, 0.9);
+      line-height: 1.15;
+      text-shadow: 0 0 40px rgba(150, 140, 190, 0.25);
     }
 
     /* Instructions - gentle guidance */
     .activity-instructions {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 300;
-      line-height: 2;
+      line-height: 2.1;
       margin-bottom: 52px;
-      color: rgba(180, 175, 200, 0.5);
-      max-width: 400px;
+      color: rgba(185, 180, 205, 0.55);
+      max-width: 420px;
       margin-left: auto;
       margin-right: auto;
+    }
+
+    /* Soft fade-up when an activity changes */
+    .fade-in { animation: fadeUp 1s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
+    .fade-in.d1 { animation-delay: 0.08s; }
+    .fade-in.d2 { animation-delay: 0.18s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* === Breathing orb === */
@@ -504,6 +516,7 @@
 
     const typeLabels = {
       'eye': 'Eyes',
+      'combo': 'Eyes + Stretch',
       'micro-stretch': 'Stretch',
       'full-stretch': 'Stretch',
       'posture': 'Posture',
@@ -572,6 +585,14 @@
       activityType.textContent = typeLabels[activity.type] || '';
       activityName.textContent = activity.name;
       activityInstructions.textContent = activity.instructions;
+
+      // Re-trigger the fade-up entrance on each activity
+      [[activityType, ''], [activityName, 'd1'], [activityInstructions, 'd2']].forEach(([el, delay]) => {
+        el.classList.remove('fade-in', 'd1', 'd2');
+        void el.offsetWidth;
+        el.classList.add('fade-in');
+        if (delay) el.classList.add(delay);
+      });
 
       // Hide all visuals
       stretchVisual.classList.remove('visible');

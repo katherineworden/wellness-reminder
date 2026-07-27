@@ -304,36 +304,31 @@ class BreakScheduler {
     const cycle = this.cycleCount;
     const activities = [];
 
-    // Eye break every cycle (20 min)
-    activities.push({
-      type: 'eye', name: 'Look Away', duration: 20,
-      instructions: 'Look at something 20 feet away for 20 seconds. Let your eyes relax and refocus.'
-    });
-
-    // Micro-stretch every cycle
+    // Eyes + micro-stretch stacked: rest your eyes while you stretch (20 min)
     const ms = microStretches[microStretchIndex];
-    activities.push({ type: 'micro-stretch', ...ms });
+    activities.push({
+      type: 'combo',
+      name: ms.name,
+      duration: Math.max(20, ms.duration),
+      instructions: `Rest your eyes on something far away while you stretch. ${ms.instructions}`,
+      animation: ms.animation
+    });
     microStretchIndex = (microStretchIndex + 1) % microStretches.length;
 
-    // Posture switch + breathing every 2nd cycle (40 min)
+    // Posture switch folded into breathing every 2nd cycle (40 min)
     if (cycle % 2 === 0) {
       const cur = store.get('currentPosture');
       const next = cur === 'sit' ? 'stand' : 'sit';
       store.set('currentPosture', next);
 
       activities.push({
-        type: 'posture',
-        name: next === 'stand' ? 'Time to Stand' : 'Time to Sit',
-        duration: 10,
+        type: 'breathing',
+        name: next === 'stand' ? 'Stand & Breathe' : 'Sit & Breathe',
+        duration: 45,
         instructions: next === 'stand'
-          ? 'Raise your desk and stand tall. Roll your shoulders back, feet hip-width apart.'
-          : 'Lower your desk and sit with intention. Feet flat, back supported, shoulders relaxed.',
+          ? 'Raise your desk and stand tall, shoulders back. Then settle in with the circle — in for 4, hold 4, out 4.'
+          : 'Lower your desk and sit back down with intention. Then settle in with the circle — in for 4, hold 4, out 4.',
         newPosture: next
-      });
-
-      activities.push({
-        type: 'breathing', name: 'Mindful Breathing', duration: 36,
-        instructions: 'Follow the circle. Breathe in for 4 seconds, hold for 4, breathe out for 4.'
       });
     }
 
@@ -373,8 +368,11 @@ class BreakScheduler {
     this.snoozeCount = 0;
     showBreakOverlay({
       activities: [
-        { type: 'eye', name: 'Look Away', duration: 20, instructions: 'Look at something 20 feet away for 20 seconds. Let your eyes relax and refocus.' },
-        { type: 'micro-stretch', ...ms },
+        {
+          type: 'combo', name: ms.name, duration: Math.max(20, ms.duration),
+          instructions: `Rest your eyes on something far away while you stretch. ${ms.instructions}`,
+          animation: ms.animation
+        },
         { type: 'breathing', name: 'Mindful Breathing', duration: 36, instructions: 'Follow the circle. Breathe in for 4 seconds, hold for 4, breathe out for 4.' }
       ],
       cycleNumber: 0
@@ -522,8 +520,7 @@ function updateTrayMenu() {
     { label: 'Test break', click: () => {
       showBreakOverlay({
         activities: [
-          { type: 'eye', name: 'Look Away', duration: 5, instructions: 'Look at something 20 feet away. Let your eyes relax.' },
-          { type: 'micro-stretch', name: 'Neck Rolls', duration: 5, instructions: 'Slowly roll your head in a circle. 5 times each direction.', animation: 'neck-roll' },
+          { type: 'combo', name: 'Neck Rolls', duration: 5, instructions: 'Rest your eyes on something far away while you stretch. Slowly roll your head in a circle.', animation: 'neck-roll' },
           { type: 'breathing', name: 'Mindful Breathing', duration: 12, instructions: 'Follow the circle. Breathe in for 4 seconds, hold for 4, breathe out for 4.' }
         ],
         cycleNumber: 0
