@@ -122,7 +122,35 @@ async function isMicInUse() {
   }
 }
 
+// Permission-free detection via power assertions and processes.
+// Any WebRTC call (Meet, Teams, Slack huddles, Discord, Zoom-in-browser) makes
+// Chromium/Electron hold a "WebRTC has active PeerConnections" power assertion,
+// and Zoom/FaceTime/recorders hold their own — no Accessibility access needed.
+async function isInCallOrRecording() {
+  try {
+    const { stdout } = await execAsync('pmset -g assertions', { timeout: 4000 });
+    if (/PeerConnections/i.test(stdout)) return 'call';
+    if (/pid \d+\((zoom\.us|CptHost|FaceTime)\)/i.test(stdout)) return 'call';
+    if (/screencaptureui/i.test(stdout)) return 'recording';
+  } catch {}
+  try {
+    const { stdout } = await execAsync(
+      'pgrep -x screencapture; pgrep -x CptHost; pgrep -x OBS; pgrep -f "OBS Studio"; true',
+      { timeout: 3000 }
+    );
+    if (stdout.trim()) return 'recording';
+  } catch {}
+  return null;
+}
+
 async function checkForCallsOrFullscreen() {
+  // Reliable, permission-free checks first
+  const busy = await isInCallOrRecording();
+  if (busy) {
+    console.log(`[Wellness] Detected ${busy} via assertions/processes, skipping break`);
+    return true;
+  }
+
   try {
     // Single comprehensive AppleScript check for native apps + fullscreen
     const result = await execAsync(`osascript -e '

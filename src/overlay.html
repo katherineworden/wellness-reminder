@@ -488,7 +488,10 @@
           (i === currentActivityIndex ? ' active' : '');
       });
 
-      activityType.textContent = typeLabels[activity.type] || '';
+      // Posture switches get an unmissable directive label
+      activityType.textContent = activity.newPosture
+        ? (activity.newPosture === 'stand' ? 'Stand Up' : 'Sit Down')
+        : (typeLabels[activity.type] || '');
       activityName.textContent = activity.name;
       activityInstructions.textContent = activity.instructions;
 
@@ -513,7 +516,13 @@
         stretchVisual.classList.add('visible');
         stretchSvg.innerHTML = stretchFigures[activity.animation];
       } else if (activity.type === 'breathing') {
-        breathContainer.classList.add('visible');
+        if (activity.newPosture) {
+          // Show the stand/sit figure first — the ring takes over once begun
+          postureVisual.classList.add('visible');
+          $(activity.newPosture === 'stand' ? 'standFigure' : 'sitFigure').style.display = 'block';
+        } else {
+          breathContainer.classList.add('visible');
+        }
         breathInstruction.style.display = 'block';
         breathInstruction.textContent = '';
         breathWord.textContent = 'breathe';
@@ -546,7 +555,14 @@
       actionButtons.style.display = 'flex';
       timerContainer.classList.remove('waiting');
 
-      if (activity.type === 'breathing') startBreathingCycle();
+      if (activity.type === 'breathing') {
+        // Swap the posture figure for the breathing ring once they begin
+        postureVisual.classList.remove('visible');
+        $('sitFigure').style.display = 'none';
+        $('standFigure').style.display = 'none';
+        breathContainer.classList.add('visible');
+        startBreathingCycle();
+      }
 
       function tick() {
         timerText.textContent = remainingTime;
