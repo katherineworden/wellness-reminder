@@ -8,137 +8,160 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --ink: #171511;
-      --ink-deep: #121009;
-      --ivory: #e8e2d3;
-      --stone: #8d8674;
-      --serif: 'Iowan Old Style', 'Palatino', 'Times New Roman', Georgia, serif;
+      --paper: #f3ead2;
+      --paper-deep: #e9dcb8;
+      --pine: #2f4239;
+      --pine-soft: #5c6e60;
+      --terra: #c0522e;
+      --mustard: #b98a2e;
+      --slab: 'Superclarendon', 'Bookman Old Style', 'Georgia', serif;
+      --type: 'American Typewriter', 'Courier New', monospace;
+      --book: 'Georgia', 'Iowan Old Style', serif;
     }
 
     body {
-      font-family: var(--serif);
-      background: radial-gradient(ellipse 140% 100% at 50% 0%, #1c1913 0%, var(--ink) 60%, var(--ink-deep) 100%);
+      font-family: var(--book);
+      background: var(--paper);
       min-height: 100vh;
-      color: var(--ivory);
+      color: var(--pine);
       -webkit-app-region: drag;
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Poster frame */
+    .frame {
+      position: fixed;
+      inset: 10px;
+      border: 2px solid var(--pine);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .frame::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid var(--pine);
+      opacity: 0.4;
+    }
+
     .container {
-      padding: 52px 34px 30px;
+      padding: 46px 34px 30px;
       -webkit-app-region: no-drag;
     }
 
-    /* Header */
     .header {
       text-align: center;
-      margin-bottom: 34px;
+      margin-bottom: 8px;
     }
 
     .header h1 {
-      font-size: 26px;
-      font-weight: 400;
-      font-style: italic;
-      color: rgba(232, 226, 211, 0.85);
+      font-family: var(--slab);
+      font-size: 22px;
+      font-weight: 700;
       letter-spacing: 0.5px;
     }
 
-    .header h1::after {
-      content: '';
-      display: block;
-      width: 36px;
-      height: 1px;
-      background: rgba(141, 134, 116, 0.35);
-      margin: 18px auto 0;
+    .header .ornament {
+      color: var(--terra);
+      font-size: 8px;
+      letter-spacing: 6px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+      user-select: none;
     }
 
-    /* Tabs — spaced capitals, hairline underline for the active one */
+    /* Tabs — typewriter, active underlined */
     .tabs {
       display: flex;
-      gap: 30px;
-      margin-bottom: 34px;
+      gap: 24px;
+      margin-bottom: 24px;
       justify-content: center;
     }
 
     .tab {
-      padding: 4px 2px;
+      font-family: var(--type);
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 6px 2px;
       background: transparent;
       border: none;
-      border-bottom: 1px solid transparent;
-      color: rgba(141, 134, 116, 0.5);
+      border-bottom: 2px solid transparent;
+      color: var(--pine-soft);
       cursor: pointer;
-      transition: color 0.4s ease, border-color 0.4s ease;
-      font-size: 10px;
-      font-family: var(--serif);
-      letter-spacing: 3px;
-      text-transform: uppercase;
+      transition: color 0.2s ease, border-color 0.2s ease;
     }
 
-    .tab:hover { color: rgba(232, 226, 211, 0.6); }
+    .tab:hover { color: var(--pine); }
 
     .tab.active {
-      color: rgba(232, 226, 211, 0.85);
-      border-bottom-color: rgba(232, 226, 211, 0.4);
+      color: var(--terra);
+      border-bottom-color: var(--terra);
     }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Sections — no cards; a heading over a hairline, like a book chapter */
-    .section {
-      margin-bottom: 34px;
+    /* Ruled boxes, like a printed form */
+    .card {
+      background: transparent;
+      border: 2px solid var(--pine);
+      border-radius: 2px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
     }
 
-    .section h3 {
+    .card h3 {
+      font-family: var(--type);
       font-size: 10px;
-      font-weight: 400;
-      color: rgba(141, 134, 116, 0.6);
-      text-transform: uppercase;
       letter-spacing: 3px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.18);
-      margin-bottom: 16px;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 14px;
     }
 
     /* Stats */
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
       text-align: center;
-      padding: 8px 0 4px;
+      padding: 4px 0 2px;
     }
 
     .stat-value {
-      font-size: 34px;
-      font-weight: 400;
+      font-family: var(--slab);
+      font-size: 32px;
+      font-weight: 700;
       display: block;
-      margin-bottom: 8px;
-      color: rgba(232, 226, 211, 0.85);
+      margin-bottom: 4px;
+      color: var(--pine);
       font-variant-numeric: tabular-nums;
     }
 
-    .stat.skipped .stat-value { color: rgba(141, 134, 116, 0.55); }
-    .stat.streak .stat-value { color: rgba(232, 226, 211, 0.65); }
+    .stat.skipped .stat-value { color: var(--terra); }
+    .stat.streak .stat-value { color: var(--mustard); }
 
     .stat-label {
+      font-family: var(--type);
       font-size: 9px;
-      color: rgba(141, 134, 116, 0.5);
+      color: var(--pine-soft);
       text-transform: uppercase;
       letter-spacing: 2px;
     }
 
     .progress-bar {
-      height: 1px;
-      background: rgba(141, 134, 116, 0.15);
+      height: 4px;
+      background: var(--paper-deep);
       overflow: hidden;
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
     .progress-fill {
       height: 100%;
-      background: rgba(232, 226, 211, 0.5);
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--terra);
+      transition: width 0.6s ease;
     }
 
     /* Rows */
@@ -146,222 +169,256 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 13px 0;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(47, 66, 57, 0.18);
     }
 
-    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .toggle-row:first-of-type { padding-top: 2px; }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 2px; }
+    .toggle-row:first-of-type { padding-top: 0; }
+
+    /* The rhythm row wraps so the select sits on its own line */
+    .rhythm-row { flex-wrap: wrap; gap: 10px; }
+    .rhythm-row select { margin-left: auto; }
 
     .toggle-info h4 {
       font-size: 14px;
-      font-weight: 400;
-      margin-bottom: 3px;
-      color: rgba(232, 226, 211, 0.75);
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--pine);
     }
 
     .toggle-info p {
-      font-size: 12px;
       font-style: italic;
-      color: rgba(141, 134, 116, 0.55);
+      font-size: 12px;
+      color: var(--pine-soft);
     }
 
-    /* Toggle — hairline oval with a small dot */
+    /* Toggle — letterpress switch */
     .toggle {
-      width: 36px;
-      height: 19px;
+      width: 40px;
+      height: 21px;
       background: transparent;
-      border: 1px solid rgba(141, 134, 116, 0.4);
-      border-radius: 10px;
+      border: 2px solid var(--pine);
+      border-radius: 3px;
       position: relative;
       cursor: pointer;
-      transition: border-color 0.3s ease;
+      transition: background 0.2s ease;
       flex-shrink: 0;
     }
 
-    .toggle.active { border-color: rgba(232, 226, 211, 0.6); }
+    .toggle.active { background: var(--pine); }
 
     .toggle::after {
       content: '';
       position: absolute;
-      width: 9px; height: 9px;
-      background: rgba(141, 134, 116, 0.6);
-      border-radius: 50%;
-      top: 4px; left: 5px;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+      width: 11px; height: 11px;
+      background: var(--pine);
+      top: 3px; left: 3px;
+      transition: transform 0.2s ease, background 0.2s ease;
     }
 
     .toggle.active::after {
-      transform: translateX(16px);
-      background: rgba(232, 226, 211, 0.9);
+      transform: translateX(19px);
+      background: var(--paper);
     }
 
-    /* Schedule rows */
+    /* Schedule */
     .schedule-item {
       display: flex;
       align-items: baseline;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(47, 66, 57, 0.18);
     }
 
-    .schedule-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .schedule-item:first-child { padding-top: 2px; }
+    .schedule-item:last-child { border-bottom: none; padding-bottom: 2px; }
+    .schedule-item:first-child { padding-top: 0; }
 
     .schedule-info { flex: 1; }
 
     .schedule-info h4 {
       font-size: 14px;
-      font-weight: 400;
-      margin-bottom: 2px;
-      color: rgba(232, 226, 211, 0.75);
+      font-weight: 600;
+      margin-bottom: 1px;
     }
 
     .schedule-info p {
-      font-size: 12px;
       font-style: italic;
-      color: rgba(141, 134, 116, 0.55);
+      font-size: 12px;
+      color: var(--pine-soft);
     }
 
     .schedule-time {
-      font-size: 11px;
-      color: rgba(141, 134, 116, 0.5);
+      font-family: var(--type);
+      font-size: 10px;
       letter-spacing: 1px;
-      font-variant-numeric: tabular-nums;
+      text-transform: uppercase;
+      color: var(--pine-soft);
     }
 
-    /* Recent breaks */
-    .recent-breaks { max-height: 170px; overflow-y: auto; }
+    /* Recent */
+    .recent-breaks { max-height: 160px; overflow-y: auto; }
 
     .break-item {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.08);
+      border-bottom: 1px solid rgba(47, 66, 57, 0.15);
     }
 
     .break-item:last-child { border-bottom: none; }
 
     .break-time {
-      color: rgba(141, 134, 116, 0.55);
-      font-size: 12px;
-      font-variant-numeric: tabular-nums;
+      font-family: var(--type);
+      color: var(--pine-soft);
+      font-size: 11px;
+      letter-spacing: 1px;
     }
 
     .break-status {
-      font-size: 12px;
-      font-style: italic;
+      font-family: var(--type);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
-    .break-status.completed { color: rgba(232, 226, 211, 0.6); }
-    .break-status.skipped { color: rgba(141, 134, 116, 0.4); }
+    .break-status.completed { color: var(--pine); }
+    .break-status.skipped { color: var(--terra); }
 
     /* Shortcuts */
     .shortcut-row {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.1);
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(47, 66, 57, 0.18);
       font-size: 13px;
-      color: rgba(232, 226, 211, 0.6);
+      color: var(--pine);
     }
 
     .shortcut-row:last-child { border-bottom: none; }
 
     kbd {
-      font-family: var(--serif);
-      font-size: 11px;
+      font-family: var(--type);
+      font-size: 10px;
       letter-spacing: 1px;
-      color: rgba(141, 134, 116, 0.7);
+      border: 1px solid var(--pine-soft);
+      border-radius: 3px;
+      padding: 2px 8px;
+      color: var(--pine);
     }
 
-    /* Stretch rotation */
+    /* Rhythm controls */
+    select, .custom-minutes input {
+      -webkit-app-region: no-drag;
+      appearance: none;
+      font-family: var(--type);
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--pine);
+      background: transparent;
+      border: 2px solid var(--pine);
+      border-radius: 3px;
+      padding: 7px 12px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+      text-align: center;
+    }
+
+    select:hover { background: var(--pine); color: var(--paper); }
+    select option { background: #f3ead2; color: #2f4239; }
+
+    .custom-minutes {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      padding-top: 12px;
+    }
+
+    .custom-minutes.visible { display: flex; }
+
+    .custom-minutes input {
+      width: 70px;
+      cursor: text;
+    }
+
+    .custom-minutes input:hover { background: transparent; color: var(--pine); }
+
+    .custom-minutes input::-webkit-outer-spin-button,
+    .custom-minutes input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .custom-minutes label {
+      font-family: var(--type);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--pine-soft);
+    }
+
     .stretch-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 18px;
       padding-top: 2px;
     }
 
     .stretch-list h4 {
+      font-family: var(--type);
       font-size: 9px;
-      font-weight: 400;
-      margin-bottom: 10px;
-      color: rgba(141, 134, 116, 0.5);
-      text-transform: uppercase;
       letter-spacing: 2px;
+      margin-bottom: 8px;
+      color: var(--pine-soft);
+      text-transform: uppercase;
     }
 
     .stretch-list ul {
       list-style: none;
-      color: rgba(232, 226, 211, 0.5);
+      color: var(--pine);
+      opacity: 0.8;
       font-size: 13px;
-      line-height: 2;
+      line-height: 1.95;
     }
 
     .empty-state {
       text-align: center;
-      padding: 22px 16px;
-      color: rgba(141, 134, 116, 0.4);
-      font-size: 13px;
+      padding: 20px 14px;
+      color: var(--pine-soft);
       font-style: italic;
+      font-size: 13px;
     }
 
     .note {
-      font-size: 12px;
+      font-size: 13px;
       font-style: italic;
-      color: rgba(141, 134, 116, 0.5);
-      line-height: 1.9;
+      color: var(--pine-soft);
+      line-height: 1.75;
     }
 
     .close-hint {
       text-align: center;
-      margin-top: 24px;
-      font-size: 11px;
-      font-style: italic;
-      color: rgba(141, 134, 116, 0.35);
+      margin-top: 18px;
+      font-family: var(--type);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--pine-soft);
+      opacity: 0.7;
     }
-
-    .motivation {
-      text-align: center;
-      padding: 6px 20px 0;
-      font-size: 14px;
-      font-style: italic;
-      color: rgba(141, 134, 116, 0.6);
-      line-height: 1.8;
-    }
-
-    /* Rhythm select — a quiet serif control */
-    select {
-      -webkit-app-region: no-drag;
-      appearance: none;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(141, 134, 116, 0.4);
-      color: rgba(232, 226, 211, 0.8);
-      font-family: var(--serif);
-      font-size: 13px;
-      letter-spacing: 1px;
-      padding: 3px 6px;
-      outline: none;
-      cursor: pointer;
-      text-align: right;
-    }
-
-    select:hover { border-bottom-color: rgba(232, 226, 211, 0.5); }
-    select option { background: #171511; color: #e8e2d3; }
 
     ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(141, 134, 116, 0.2); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: var(--paper-deep); border-radius: 2px; }
   </style>
 </head>
 <body>
+  <div class="frame"></div>
   <div class="container">
     <div class="header">
-      <h1>Wellness</h1>
+      <h1>Wellness Reminder</h1>
+      <div class="ornament">&#10038;&nbsp;&#9789;&nbsp;&#10038;</div>
     </div>
 
     <div class="tabs">
@@ -372,7 +429,7 @@
 
     <!-- Summary -->
     <div class="tab-content active" id="summary">
-      <div class="section">
+      <div class="card">
         <div class="stat-grid">
           <div class="stat completed">
             <span class="stat-value" id="completedCount">0</span>
@@ -392,59 +449,57 @@
         </div>
       </div>
 
-      <div class="section">
-        <h3>Recent</h3>
+      <div class="card">
+        <h3>The Ledger</h3>
         <div class="recent-breaks" id="recentBreaks">
-          <p class="empty-state">no pauses yet today</p>
+          <p class="empty-state">Nothing yet — the first break is on its way</p>
         </div>
       </div>
-
-      <p class="motivation" id="motivation"></p>
     </div>
 
     <!-- Schedule -->
     <div class="tab-content" id="schedule">
-      <div class="section">
-        <h3>Rhythm</h3>
+      <div class="card">
+        <h3>The Programme</h3>
         <div class="schedule-item">
           <div class="schedule-info">
-            <h4>Eyes &amp; stretch</h4>
-            <p>gaze twenty feet away while you stretch</p>
+            <h4>Eyes &amp; Stretch</h4>
+            <p>Look far away while stretching</p>
           </div>
-          <span class="schedule-time">20 min</span>
+          <span class="schedule-time">Every break</span>
         </div>
         <div class="schedule-item">
           <div class="schedule-info">
-            <h4>Posture &amp; breath</h4>
-            <p>change position, then settle into breathing</p>
+            <h4>Posture &amp; Breathing</h4>
+            <p>Switch sit and stand, then breathe</p>
           </div>
-          <span class="schedule-time">40 min</span>
+          <span class="schedule-time">Every 2nd</span>
         </div>
         <div class="schedule-item">
           <div class="schedule-info">
-            <h4>Full stretch</h4>
-            <p>deeper work for back, hips, and legs</p>
+            <h4>Full Stretch</h4>
+            <p>Back, hips, and legs</p>
           </div>
-          <span class="schedule-time">100 min</span>
+          <span class="schedule-time">Every 5th</span>
         </div>
         <div class="schedule-item">
           <div class="schedule-info">
-            <h4>Walk &amp; settle</h4>
-            <p>five minutes away, then a settling breath</p>
+            <h4>A Walk</h4>
+            <p>Five minutes off, then a settling breath</p>
           </div>
-          <span class="schedule-time">2 hrs</span>
+          <span class="schedule-time">Every 6th</span>
         </div>
         <div class="schedule-item">
           <div class="schedule-info">
             <h4>Mindfulness</h4>
-            <p>a longer, quieter sitting</p>
+            <p>A longer, quieter sitting</p>
           </div>
-          <span class="schedule-time">4 hrs</span>
+          <span class="schedule-time">Every 12th</span>
         </div>
       </div>
 
-      <div class="section">
-        <h3>Rotation</h3>
+      <div class="card">
+        <h3>Stretch Rotation</h3>
         <div class="stretch-list">
           <div>
             <h4>Quick</h4>
@@ -474,83 +529,87 @@
 
     <!-- Settings -->
     <div class="tab-content" id="settings">
-      <div class="section">
+      <div class="card">
         <h3>Rhythm</h3>
-        <div class="toggle-row">
+        <div class="toggle-row rhythm-row">
           <div class="toggle-info">
-            <h4>A pause every</h4>
-            <p>the base rhythm; everything else keeps its proportion</p>
+            <h4>A break every</h4>
           </div>
           <select id="intervalSelect">
             <option value="10">10 min</option>
             <option value="15">15 min</option>
-            <option value="20">20 min</option>
+            <option value="20" selected>20 min &mdash; recommended</option>
             <option value="25">25 min</option>
             <option value="30">30 min</option>
             <option value="45">45 min</option>
             <option value="60">60 min</option>
+            <option value="custom">Custom&hellip;</option>
           </select>
+        </div>
+        <div class="custom-minutes" id="customMinutes">
+          <input type="number" id="customInput" min="5" max="240" value="20">
+          <label>minutes</label>
         </div>
       </div>
 
-      <div class="section">
-        <h3>Kinds of pauses</h3>
+      <div class="card">
+        <h3>Kinds of Breaks</h3>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Eyes &amp; stretch</h4>
-            <p>every pause</p>
+            <h4>Eyes &amp; Stretch</h4>
+            <p>Every break</p>
           </div>
           <div class="toggle active" id="toggleCombo"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Posture &amp; breath</h4>
-            <p>every second pause</p>
+            <h4>Posture &amp; Breathing</h4>
+            <p>Every 2nd break</p>
           </div>
           <div class="toggle active" id="togglePosture"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Full stretch</h4>
-            <p>every fifth pause</p>
+            <h4>Full Stretch</h4>
+            <p>Every 5th break</p>
           </div>
           <div class="toggle active" id="toggleFullStretch"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Walk &amp; settle</h4>
-            <p>every sixth pause</p>
+            <h4>A Walk</h4>
+            <p>Every 6th break</p>
           </div>
           <div class="toggle active" id="toggleWalk"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
             <h4>Mindfulness</h4>
-            <p>every twelfth pause</p>
+            <p>Every 12th break</p>
           </div>
           <div class="toggle active" id="toggleMindfulness"></div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="card">
         <h3>Preferences</h3>
         <div class="toggle-row">
           <div class="toggle-info">
             <h4>Pomodoro</h4>
-            <p>twenty-five minute focus sessions</p>
+            <p>25-minute focus sessions</p>
           </div>
           <div class="toggle" id="pomodoroToggle"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
-            <h4>Launch on startup</h4>
-            <p>begin when you log in</p>
+            <h4>Launch on Startup</h4>
+            <p>Begin when you log in</p>
           </div>
           <div class="toggle active" id="startupToggle"></div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="card">
         <h3>Shortcuts</h3>
         <div class="shortcut-row">
           <span>Pause or resume</span>
@@ -558,24 +617,24 @@
         </div>
         <div class="shortcut-row">
           <span>Begin, advance</span>
-          <kbd>return</kbd>
+          <kbd>RETURN</kbd>
         </div>
         <div class="shortcut-row">
           <span>Skip</span>
-          <kbd>esc</kbd>
+          <kbd>ESC</kbd>
         </div>
       </div>
 
-      <div class="section">
-        <h3>Quiet hours</h3>
+      <div class="card">
+        <h3>Do Not Disturb</h3>
         <p class="note">
-          Pauses hold their silence during calls and fullscreen work &mdash;
-          Zoom, Google Meet, Slack huddles, FaceTime.
+          Breaks hold their peace during calls and recordings — Zoom, Google Meet,
+          Slack huddles, FaceTime, and screen capture.
         </p>
       </div>
     </div>
 
-    <p class="close-hint">closing hides the window &mdash; the app lives in your menu bar</p>
+    <p class="close-hint">Closing hides the window &mdash; it lives in the menu bar</p>
   </div>
 
   <script>
@@ -603,6 +662,76 @@
       ipcRenderer.send('set-launch-on-startup', startupToggle.classList.contains('active'));
     });
 
+    // Break customization: checklist + rhythm (with custom entry)
+    const breakToggleIds = {
+      combo: 'toggleCombo',
+      posture: 'togglePosture',
+      fullStretch: 'toggleFullStretch',
+      walk: 'toggleWalk',
+      mindfulness: 'toggleMindfulness'
+    };
+    const intervalSelect = document.getElementById('intervalSelect');
+    const customMinutes = document.getElementById('customMinutes');
+    const customInput = document.getElementById('customInput');
+    const PRESETS = ['10', '15', '20', '25', '30', '45', '60'];
+
+    function currentInterval() {
+      if (intervalSelect.value === 'custom') {
+        const v = parseInt(customInput.value, 10);
+        return Math.min(240, Math.max(5, isNaN(v) ? 20 : v));
+      }
+      return parseInt(intervalSelect.value, 10);
+    }
+
+    function sendPrefs() {
+      const enabled = {};
+      for (const [key, id] of Object.entries(breakToggleIds)) {
+        enabled[key] = document.getElementById(id).classList.contains('active');
+      }
+      ipcRenderer.send('save-preferences', {
+        enabled,
+        baseInterval: currentInterval()
+      });
+    }
+
+    for (const id of Object.values(breakToggleIds)) {
+      const el = document.getElementById(id);
+      el.addEventListener('click', () => {
+        el.classList.toggle('active');
+        sendPrefs();
+      });
+    }
+
+    intervalSelect.addEventListener('change', () => {
+      customMinutes.classList.toggle('visible', intervalSelect.value === 'custom');
+      sendPrefs();
+    });
+
+    customInput.addEventListener('change', () => {
+      customInput.value = currentInterval();
+      sendPrefs();
+    });
+
+    ipcRenderer.send('get-settings');
+    ipcRenderer.on('settings-data', (_, data) => {
+      pomodoroToggle.classList.toggle('active', data.pomodoroEnabled);
+      startupToggle.classList.toggle('active', data.launchOnStartup);
+      if (data.prefs) {
+        const v = String(data.prefs.baseInterval);
+        if (PRESETS.includes(v)) {
+          intervalSelect.value = v;
+          customMinutes.classList.remove('visible');
+        } else {
+          intervalSelect.value = 'custom';
+          customInput.value = v;
+          customMinutes.classList.add('visible');
+        }
+        for (const [key, id] of Object.entries(breakToggleIds)) {
+          document.getElementById(id).classList.toggle('active', data.prefs.enabled[key] !== false);
+        }
+      }
+    });
+
     function loadStats() { ipcRenderer.send('get-stats'); }
 
     ipcRenderer.on('stats-data', (_, stats) => {
@@ -626,14 +755,14 @@
       if (stats.breaks && stats.breaks.length > 0) {
         recentBreaks.innerHTML = stats.breaks.slice(-8).reverse().map(b => {
           const time = new Date(b.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-          const word = b.status === 'completed' ? 'taken' : b.status;
+          const word = b.status === 'completed' ? 'Taken' : 'Skipped';
           return `<div class="break-item">
             <span class="break-time">${time}</span>
             <span class="break-status ${b.status}">${word}</span>
           </div>`;
         }).join('');
       } else {
-        recentBreaks.innerHTML = '<p class="empty-state">no pauses yet today</p>';
+        recentBreaks.innerHTML = '<p class="empty-state">Nothing yet — the first break is on its way</p>';
       }
     });
 
@@ -645,58 +774,6 @@
       document.getElementById('completedCount').textContent = stats.completed || 0;
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
     });
-
-    // Break customization: checklist + rhythm
-    const breakToggleIds = {
-      combo: 'toggleCombo',
-      posture: 'togglePosture',
-      fullStretch: 'toggleFullStretch',
-      walk: 'toggleWalk',
-      mindfulness: 'toggleMindfulness'
-    };
-    const intervalSelect = document.getElementById('intervalSelect');
-
-    function sendPrefs() {
-      const enabled = {};
-      for (const [key, id] of Object.entries(breakToggleIds)) {
-        enabled[key] = document.getElementById(id).classList.contains('active');
-      }
-      ipcRenderer.send('save-preferences', {
-        enabled,
-        baseInterval: parseInt(intervalSelect.value, 10)
-      });
-    }
-
-    for (const id of Object.values(breakToggleIds)) {
-      const el = document.getElementById(id);
-      el.addEventListener('click', () => {
-        el.classList.toggle('active');
-        sendPrefs();
-      });
-    }
-
-    intervalSelect.addEventListener('change', sendPrefs);
-
-    ipcRenderer.send('get-settings');
-    ipcRenderer.on('settings-data', (_, data) => {
-      pomodoroToggle.classList.toggle('active', data.pomodoroEnabled);
-      startupToggle.classList.toggle('active', data.launchOnStartup);
-      if (data.prefs) {
-        intervalSelect.value = String(data.prefs.baseInterval);
-        for (const [key, id] of Object.entries(breakToggleIds)) {
-          document.getElementById(id).classList.toggle('active', data.prefs.enabled[key] !== false);
-        }
-      }
-    });
-
-    const quotes = [
-      'Rest is part of the work.',
-      'The body keeps its own time.',
-      'A few slow breaths can change an afternoon.',
-      'Attention returns to those who pause.',
-      'Nothing is lost by looking away for a moment.'
-    ];
-    document.getElementById('motivation').textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
     loadStats();
     setInterval(loadStats, 60000);
