@@ -333,6 +333,26 @@
       line-height: 1.8;
     }
 
+    /* Rhythm select — a quiet serif control */
+    select {
+      -webkit-app-region: no-drag;
+      appearance: none;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(141, 134, 116, 0.4);
+      color: rgba(232, 226, 211, 0.8);
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 3px 6px;
+      outline: none;
+      cursor: pointer;
+      text-align: right;
+    }
+
+    select:hover { border-bottom-color: rgba(232, 226, 211, 0.5); }
+    select option { background: #171511; color: #e8e2d3; }
+
     ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(141, 134, 116, 0.2); border-radius: 2px; }
@@ -455,6 +475,64 @@
     <!-- Settings -->
     <div class="tab-content" id="settings">
       <div class="section">
+        <h3>Rhythm</h3>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>A pause every</h4>
+            <p>the base rhythm; everything else keeps its proportion</p>
+          </div>
+          <select id="intervalSelect">
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+            <option value="20">20 min</option>
+            <option value="25">25 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Kinds of pauses</h3>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Eyes &amp; stretch</h4>
+            <p>every pause</p>
+          </div>
+          <div class="toggle active" id="toggleCombo"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Posture &amp; breath</h4>
+            <p>every second pause</p>
+          </div>
+          <div class="toggle active" id="togglePosture"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Full stretch</h4>
+            <p>every fifth pause</p>
+          </div>
+          <div class="toggle active" id="toggleFullStretch"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Walk &amp; settle</h4>
+            <p>every sixth pause</p>
+          </div>
+          <div class="toggle active" id="toggleWalk"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Mindfulness</h4>
+            <p>every twelfth pause</p>
+          </div>
+          <div class="toggle active" id="toggleMindfulness"></div>
+        </div>
+      </div>
+
+      <div class="section">
         <h3>Preferences</h3>
         <div class="toggle-row">
           <div class="toggle-info">
@@ -568,10 +646,47 @@
       document.getElementById('skippedCount').textContent = stats.skipped || 0;
     });
 
+    // Break customization: checklist + rhythm
+    const breakToggleIds = {
+      combo: 'toggleCombo',
+      posture: 'togglePosture',
+      fullStretch: 'toggleFullStretch',
+      walk: 'toggleWalk',
+      mindfulness: 'toggleMindfulness'
+    };
+    const intervalSelect = document.getElementById('intervalSelect');
+
+    function sendPrefs() {
+      const enabled = {};
+      for (const [key, id] of Object.entries(breakToggleIds)) {
+        enabled[key] = document.getElementById(id).classList.contains('active');
+      }
+      ipcRenderer.send('save-preferences', {
+        enabled,
+        baseInterval: parseInt(intervalSelect.value, 10)
+      });
+    }
+
+    for (const id of Object.values(breakToggleIds)) {
+      const el = document.getElementById(id);
+      el.addEventListener('click', () => {
+        el.classList.toggle('active');
+        sendPrefs();
+      });
+    }
+
+    intervalSelect.addEventListener('change', sendPrefs);
+
     ipcRenderer.send('get-settings');
     ipcRenderer.on('settings-data', (_, data) => {
       pomodoroToggle.classList.toggle('active', data.pomodoroEnabled);
       startupToggle.classList.toggle('active', data.launchOnStartup);
+      if (data.prefs) {
+        intervalSelect.value = String(data.prefs.baseInterval);
+        for (const [key, id] of Object.entries(breakToggleIds)) {
+          document.getElementById(id).classList.toggle('active', data.prefs.enabled[key] !== false);
+        }
+      }
     });
 
     const quotes = [

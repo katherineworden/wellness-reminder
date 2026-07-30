@@ -54,6 +54,18 @@ const fullStretches = [
 let microStretchIndex = 0;
 let fullStretchIndex = 0;
 
+// User preferences with safe defaults (old installs may lack these keys)
+function getPrefs() {
+  const s = store.get('settings') || {};
+  return {
+    baseInterval: s.baseInterval || s.eyeBreakInterval || 20,
+    enabled: Object.assign(
+      { combo: true, posture: true, fullStretch: true, walk: true, mindfulness: true },
+      s.enabled || {}
+    )
+  };
+}
+
 // --- Call / fullscreen detection (single osascript, no callback nesting) ---
 
 async function runOsa(script) {
@@ -293,7 +305,7 @@ class BreakScheduler {
 
   scheduleNextBreak() {
     if (this.timer) clearTimeout(this.timer);
-    const intervalMs = store.get('settings').eyeBreakInterval * 60 * 1000;
+    const intervalMs = getPrefs().baseInterval * 60 * 1000;
     this.timer = setTimeout(() => this.triggerBreak(), intervalMs);
     updateTrayMenu();
   }
@@ -324,27 +336,37 @@ class BreakScheduler {
 
     this.cycleCount++;
     const breakData = this.determineBreakType();
+
+    // Every break type due this cycle is switched off — quietly wait for the next one
+    if (breakData.activities.length === 0) {
+      this.scheduleNextBreak();
+      return;
+    }
+
     this.snoozeCount = 0;
     showBreakOverlay(breakData);
   }
 
   determineBreakType() {
     const cycle = this.cycleCount;
+    const { enabled } = getPrefs();
     const activities = [];
 
-    // Eyes + micro-stretch stacked: rest your eyes while you stretch (20 min)
-    const ms = microStretches[microStretchIndex];
-    activities.push({
-      type: 'combo',
-      name: ms.name,
-      duration: Math.max(20, ms.duration),
-      instructions: `Fix your gaze on something at least 20 feet away — out a window or across the room — and keep it there while you stretch. ${ms.instructions}`,
-      animation: ms.animation
-    });
-    microStretchIndex = (microStretchIndex + 1) % microStretches.length;
+    // Eyes + micro-stretch stacked: rest your eyes while you stretch (every break)
+    if (enabled.combo) {
+      const ms = microStretches[microStretchIndex];
+      activities.push({
+        type: 'combo',
+        name: ms.name,
+        duration: Math.max(20, ms.duration),
+        instructions: `Fix your gaze on something at least 20 feet away — out a window or across the room — and keep it there while you stretch. ${ms.instructions}`,
+        animation: ms.animation
+      });
+      microStretchIndex = (microStretchIndex + 1) % microStretches.length;
+    }
 
-    // Posture switch folded into breathing every 2nd cycle (40 min)
-    if (cycle % 2 === 0) {
+    // Posture switch folded into breathing every 2nd cycle
+    if (enabled.posture && cycle % 2 === 0) {
       const cur = store.get('currentPosture');
       const next = cur === 'sit' ? 'stand' : 'sit';
       store.set('currentPosture', next);
@@ -361,14 +383,14 @@ class BreakScheduler {
     }
 
     // Full stretch every 5th cycle (~100 min)
-    if (cycle % 5 === 0) {
+    if (enabled.fullStretch && cycle % 5 === 0) {
       const fs = fullStretches[fullStretchIndex];
       activities.push({ type: 'full-stretch', ...fs });
       fullStretchIndex = (fullStretchIndex + 1) % fullStretches.length;
     }
 
     // Walk break every 6th cycle (2 hours) + settling breath
-    if (cycle % 6 === 0) {
+    if (enabled.walk && cycle % 6 === 0) {
       activities.push({
         type: 'walk', name: 'Walk Break', duration: 300,
         instructions: 'Take a 5-minute walk. Get some water, step outside if you can, give your body a real break.'
@@ -380,7 +402,7 @@ class BreakScheduler {
     }
 
     // Dedicated mindfulness every 12th cycle (4 hours)
-    if (cycle % 12 === 0) {
+    if (enabled.mindfulness && cycle % 12 === 0) {
       activities.push({
         type: 'breathing', name: 'Mindfulness Break', duration: 240,
         instructions: 'A longer pause. Close your eyes if comfortable. Follow your breath, letting thoughts pass without holding onto them.'
@@ -611,11 +633,21 @@ ipcMain.on('get-settings', (event) => {
   event.reply('settings-data', {
     pomodoroEnabled: store.get('pomodoroEnabled'),
     launchOnStartup: store.get('launchOnStartup'),
-    settings: store.get('settings')
+    settings: store.get('settings'),
+    prefs: getPrefs()
   });
 });
 
 ipcMain.on('save-settings', (_, newSettings) => store.set('settings', newSettings));
+
+ipcMain.on('save-preferences', (_, prefs) => {
+  const s = store.get('settings') || {};
+  if (prefs.baseInterval) s.baseInterval = prefs.baseInterval;
+  if (prefs.enabled) s.enabled = prefs.enabled;
+  store.set('settings', s);
+  // Apply the new rhythm right away
+  if (scheduler) scheduler.scheduleNextBreak();
+});
 
 ipcMain.on('set-launch-on-startup', (_, enabled) => {
   store.set('launchOnStartup', enabled);
